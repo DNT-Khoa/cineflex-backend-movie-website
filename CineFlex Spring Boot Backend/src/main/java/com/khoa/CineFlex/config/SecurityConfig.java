@@ -4,6 +4,7 @@ import com.khoa.CineFlex.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -20,44 +21,47 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserDetailsService userDetailsService;
     private final UserRepository userRepository;
     private final Environment environment;
+    private final CustomJwtAuthenticationFilter customJwtAuthenticationFilter;
+    private final JwtAuthenticationEntryPoint unauthorizedHandler;
 
     @Override
     public void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/api/**").permitAll()
-                .antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
+                .antMatchers("/admin/**").access("hasRole('ROLE_USER')")
                 .anyRequest().authenticated()
+                // if any exceptions occur call this
                 .and()
-                .addFilter(getAuthenticationFilter());
+                .exceptionHandling()
+                .authenticationEntryPoint(unauthorizedHandler)
+                .and()
+                // make sure we use stateless session; session won't be used to store user's state
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        // Add this jwt filter before the login filter
-        httpSecurity.addFilterBefore(new JwtTokenAuthenticationFilter(environment, userDetailsService), UsernamePasswordAuthenticationFilter.class);
 
-        // This will make our API stateless
-        httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        // Add filter to validate the tokens with every request
+        httpSecurity.addFilterBefore(customJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
     }
 
-    // Here we configure which userDetails implementation we have
-    // and the password encoder type
-    // to hep authenticate users when they log in
-    // Here we configure how to create a authenticationManager from
-    // this AuthenticationManagerBuilder
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
     }
 
-    private AuthenticationFilter getAuthenticationFilter() throws Exception{
-        AuthenticationFilter authenticationFilter = new AuthenticationFilter(userRepository, environment, authenticationManager());
-        authenticationFilter.setFilterProcessesUrl("/api/auth/login");
-        return authenticationFilter;
-    }
-
-    // This is required to user the BCryptPasswordEncoder
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
+
 }
