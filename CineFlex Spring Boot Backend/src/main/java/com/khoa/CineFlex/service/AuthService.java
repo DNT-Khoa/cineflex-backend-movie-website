@@ -2,6 +2,7 @@ package com.khoa.CineFlex.service;
 
 import com.khoa.CineFlex.DTO.AuthenticationResponse;
 import com.khoa.CineFlex.DTO.LoginRequest;
+import com.khoa.CineFlex.DTO.RefreshTokenRequest;
 import com.khoa.CineFlex.DTO.RegisterRequest;
 import com.khoa.CineFlex.mapper.UserMapper;
 import com.khoa.CineFlex.model.User;
@@ -9,6 +10,7 @@ import com.khoa.CineFlex.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,6 +34,8 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
+    private final Environment environment;
+    private final RefreshTokenService refreshTokenService;
 
     @Transactional
     public boolean signup(RegisterRequest registerRequest, String role) {
@@ -70,7 +74,16 @@ public class AuthService {
         UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getEmail());
         String token = jwtUtil.generateToken(userDetails);
 
-        return new AuthenticationResponse(token);
+        return new AuthenticationResponse(token, refreshTokenService.generateRefreshToken().getToken(), Instant.now().plusMillis(Long.parseLong(environment.getProperty("token.expiration_time"))), loginRequest.getEmail());
+    }
+
+    public AuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest) {
+        refreshTokenService.validateRefreshToken(refreshTokenRequest.getRefreshToken());
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(refreshTokenRequest.getEmail());
+        String token = jwtUtil.generateToken(userDetails);
+
+        return new AuthenticationResponse(token, refreshTokenRequest.getRefreshToken(), Instant.now().plusMillis(Long.parseLong(environment.getProperty("token.expiration_time"))), refreshTokenRequest.getEmail());
     }
 
 }
