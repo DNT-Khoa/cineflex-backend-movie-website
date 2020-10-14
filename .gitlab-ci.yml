@@ -1,0 +1,11 @@
+build:
+  script:
+    - ./mvnw build
+
+test:
+  stage: test
+  script:
+    - ./mvnw test
+
+after_script:
+  - echo "End CI"
