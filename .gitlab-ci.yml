@@ -1,6 +1,6 @@
 build:
   script:
-    - ./mvnw build
+    - ./mvnw compile
 
 test:
   stage: test
