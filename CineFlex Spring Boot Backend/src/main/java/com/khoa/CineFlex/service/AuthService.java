@@ -8,11 +8,7 @@ import com.khoa.CineFlex.mapper.UserMapper;
 import com.khoa.CineFlex.model.User;
 import com.khoa.CineFlex.repository.UserRepository;
 import lombok.AllArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -39,9 +35,6 @@ public class AuthService {
 
     @Transactional
     public boolean signup(RegisterRequest registerRequest, String role) {
-
-//        ModelMapper modelMapper = new ModelMapper();
-//        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
         User user = userMapper.registerRequestToUser(registerRequest);
 
@@ -85,5 +78,4 @@ public class AuthService {
 
         return new AuthenticationResponse(token, refreshTokenRequest.getRefreshToken(), Instant.now().plusMillis(Long.parseLong(environment.getProperty("token.expiration_time"))), refreshTokenRequest.getEmail());
     }
-
 }

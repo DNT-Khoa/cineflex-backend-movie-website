@@ -1,6 +1,5 @@
 package com.khoa.CineFlex.service;
 
-import com.khoa.CineFlex.exception.CineFlexException;
 import io.jsonwebtoken.*;
 import lombok.AllArgsConstructor;
 import org.springframework.core.env.Environment;
@@ -47,8 +46,8 @@ public class JwtUtil {
         try {
             // Jwt has not been tampered with
             Jws<Claims> claims = Jwts.parser()
-                        .setSigningKey(environment.getProperty("token.secret"))
-                        .parseClaimsJws(authToken);
+                    .setSigningKey(environment.getProperty("token.secret"))
+                    .parseClaimsJws(authToken);
             return true;
         } catch (SignatureException | MalformedJwtException | UnsupportedJwtException | IllegalArgumentException ex) {
             throw new BadCredentialsException("INVALID_CREDENTIALS", ex);
@@ -84,5 +83,4 @@ public class JwtUtil {
 
         return roles;
     }
-
 }

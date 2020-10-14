@@ -1,6 +1,5 @@
 package com.khoa.CineFlex.config;
 
-import com.khoa.CineFlex.exception.CineFlexException;
 import com.khoa.CineFlex.service.JwtUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.AllArgsConstructor;

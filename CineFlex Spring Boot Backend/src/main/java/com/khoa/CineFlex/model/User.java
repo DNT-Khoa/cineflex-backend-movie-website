@@ -37,12 +37,7 @@ public class User {
     @NotBlank(message = "Role is required")
     private String role;
 
-    @Nullable
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
-    private List<Ticket> tickets;
-
     private boolean enabled;
 
     private Instant created;
-
 }

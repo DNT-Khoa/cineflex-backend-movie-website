@@ -15,7 +15,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class SwaggerConfiguration {
     @Bean
-    public Docket cineflexApi() {
+    public Docket cineFlexApi() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                 .apis(RequestHandlerSelectors.any())
@@ -26,9 +26,9 @@ public class SwaggerConfiguration {
 
     private ApiInfo getApiInfo() {
         return new ApiInfoBuilder()
-                .title("Cineflex Movie Ticketing API")
+                .title("CineFlex Online Movie Theater API")
                 .version("1.0")
-                .description("API for CineFlex Movie Ticketing Website")
+                .description("This is the API Documentation for the CineFlex Website")
                 .contact(new Contact("Khoa Doan", "https://fontys.edu/", "doannguyenthanhkhoa2112@gmail.com"))
                 .license("Apache License Version 2.0")
                 .build();

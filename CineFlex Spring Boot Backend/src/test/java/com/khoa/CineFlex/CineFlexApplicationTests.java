@@ -8,6 +8,7 @@ class CineFlexApplicationTests {
 
 	@Test
 	void contextLoads() {
+
 	}
 
 }
