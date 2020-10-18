@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/admin")
 public class AdminController {
     @GetMapping(path = "/status/check")
-    public ResponseEntity<String> getStatus() {
-        return new ResponseEntity<>("You are authorized as an admin", HttpStatus.OK);
+    public ResponseEntity<?> getStatus() {
+        return ResponseEntity.status(200).body("You are authorized as user");
     }
 }

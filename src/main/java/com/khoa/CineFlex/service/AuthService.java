@@ -4,6 +4,7 @@ import com.khoa.CineFlex.DTO.AuthenticationResponse;
 import com.khoa.CineFlex.DTO.LoginRequest;
 import com.khoa.CineFlex.DTO.RefreshTokenRequest;
 import com.khoa.CineFlex.DTO.RegisterRequest;
+import com.khoa.CineFlex.exception.CineFlexException;
 import com.khoa.CineFlex.mapper.UserMapper;
 import com.khoa.CineFlex.model.User;
 import com.khoa.CineFlex.repository.UserRepository;
@@ -13,6 +14,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -56,6 +58,12 @@ public class AuthService {
 
     @Transactional
     public AuthenticationResponse login(LoginRequest loginRequest) throws Exception{
+        User returnUser = userRepository.findByEmail(loginRequest.getEmail());
+
+        if (returnUser == null) {
+            throw new CineFlexException("EMAIL_NOT_EXISTS");
+        }
+
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
         } catch (DisabledException e){
@@ -65,9 +73,10 @@ public class AuthService {
         }
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getEmail());
+        String role = userDetails.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_USER")) ? "User" : "Admin";
         String token = jwtUtil.generateToken(userDetails);
 
-        return new AuthenticationResponse(token, refreshTokenService.generateRefreshToken().getToken(), Instant.now().plusMillis(Long.parseLong(environment.getProperty("token.expiration_time"))), loginRequest.getEmail());
+        return new AuthenticationResponse(token, refreshTokenService.generateRefreshToken().getToken(), Instant.now().plusMillis(Long.parseLong(environment.getProperty("token.expiration_time"))), loginRequest.getEmail(), role);
     }
 
     public AuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest) {
@@ -76,6 +85,6 @@ public class AuthService {
         UserDetails userDetails = userDetailsService.loadUserByUsername(refreshTokenRequest.getEmail());
         String token = jwtUtil.generateToken(userDetails);
 
-        return new AuthenticationResponse(token, refreshTokenRequest.getRefreshToken(), Instant.now().plusMillis(Long.parseLong(environment.getProperty("token.expiration_time"))), refreshTokenRequest.getEmail());
+        return new AuthenticationResponse(token, refreshTokenRequest.getRefreshToken(), Instant.now().plusMillis(Long.parseLong(environment.getProperty("token.expiration_time"))), refreshTokenRequest.getEmail(), refreshTokenRequest.getRole());
     }
 }

@@ -45,6 +45,7 @@ public class CustomJwtAuthenticationFilter extends OncePerRequestFilter {
             throw ex;
         } catch (ExpiredJwtException ex) {
             request.setAttribute("exception", ex);
+            throw ex;
         }
 
         // Continue to other filters

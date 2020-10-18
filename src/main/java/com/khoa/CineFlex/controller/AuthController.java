@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping(path = "api/auth")
+@RequestMapping(path = "/api/auth")
 @AllArgsConstructor
 public class AuthController {
     private final AuthService authService;
@@ -34,7 +34,7 @@ public class AuthController {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(authService.login(loginRequest));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
         }
     }
 

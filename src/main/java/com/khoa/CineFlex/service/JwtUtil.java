@@ -52,7 +52,7 @@ public class JwtUtil {
         } catch (SignatureException | MalformedJwtException | UnsupportedJwtException | IllegalArgumentException ex) {
             throw new BadCredentialsException("INVALID_CREDENTIALS", ex);
         } catch (ExpiredJwtException ex) {
-            throw new ExpiredJwtException(ex.getHeader(), ex.getClaims(), "Token has expired!");
+            throw new ExpiredJwtException(ex.getHeader(), ex.getClaims(), "EXPIRED_TOKEN");
         }
     }
 

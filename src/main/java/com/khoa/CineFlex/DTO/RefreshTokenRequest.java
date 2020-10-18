@@ -15,4 +15,5 @@ public class RefreshTokenRequest {
     @NotBlank
     private String refreshToken;
     private String email;
+    private String role;
 }

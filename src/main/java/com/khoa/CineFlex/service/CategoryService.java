@@ -1,6 +1,7 @@
 package com.khoa.CineFlex.service;
 
 import com.khoa.CineFlex.DTO.CategoryDto;
+import com.khoa.CineFlex.exception.CineFlexException;
 import com.khoa.CineFlex.mapper.CategoryMapper;
 import com.khoa.CineFlex.model.Category;
 import com.khoa.CineFlex.repository.CategoryRepository;
@@ -18,7 +19,13 @@ public class CategoryService {
 
     @Transactional
     public CategoryDto createCategory(CategoryDto categoryDto) {
-        Category category = categoryMapper.dtoToCategory(categoryDto);
+        Category check = categoryRepository.findByName(categoryDto.getName());
+        if (check != null) {
+            throw new CineFlexException("Category name already exits!");
+        }
+
+        Category category = new Category();
+        category.setName(categoryDto.getName());
 
         Category save = categoryRepository.save(category);
 
@@ -28,5 +35,24 @@ public class CategoryService {
     @Transactional(readOnly = true)
     public List<CategoryDto> getAllCategories() {
         return categoryMapper.listCategoryToListDto(categoryRepository.findAll());
+    }
+
+    @Transactional
+    public boolean updateCategoryById(Long id, CategoryDto categoryDto) {
+        Category check = categoryRepository.findById(id).orElseThrow(() -> new CineFlexException("Cannot find category with id " + id));
+        if (check.getName().equals(categoryDto.getName())) {
+            return false;
+        }
+
+        Category categoryToBeUpdated = categoryMapper.dtoToCategory(categoryDto);
+
+        this.categoryRepository.save(categoryToBeUpdated);
+
+        return true;
+    }
+
+    @Transactional
+    public void deleteCategoryById(Long id) {
+        this.categoryRepository.deleteById(id);
     }
 }
