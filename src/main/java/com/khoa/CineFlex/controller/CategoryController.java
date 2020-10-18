@@ -50,4 +50,13 @@ public class CategoryController {
         this.categoryService.deleteCategoryById(categoryId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
+
+    @GetMapping(path = "/admin/categories/search")
+    public ResponseEntity<?> findCategoriesBySearchKey(@RequestParam("searchKey") String searchKey) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(this.categoryService.findCategoryBySearchKey(searchKey));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 }

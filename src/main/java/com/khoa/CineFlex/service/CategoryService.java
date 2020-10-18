@@ -55,4 +55,9 @@ public class CategoryService {
     public void deleteCategoryById(Long id) {
         this.categoryRepository.deleteById(id);
     }
+
+    @Transactional
+    public List<CategoryDto> findCategoryBySearchKey(String searchKey) {
+         return this.categoryMapper.listCategoryToListDto(this.categoryRepository.findCategoryBySearchKey(searchKey));
+    }
 }
