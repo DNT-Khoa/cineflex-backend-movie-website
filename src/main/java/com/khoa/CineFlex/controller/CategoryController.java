@@ -32,7 +32,7 @@ public class CategoryController {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(categoryService.getAllCategories());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something wrong happend!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something wrong happened!");
         }
     }
 
