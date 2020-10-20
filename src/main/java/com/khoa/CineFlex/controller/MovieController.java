@@ -23,7 +23,7 @@ public class MovieController {
         }
     }
 
-    @PostMapping("/api/movies")
+    @PostMapping("/admin/movies")
     public ResponseEntity<?> createNewComingMovies(@RequestBody MovieDto movieDto) {
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(this.movieService.createComingMovie(movieDto));

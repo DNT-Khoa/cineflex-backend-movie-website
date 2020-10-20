@@ -61,7 +61,22 @@ public class MovieService {
 
     @Transactional
     public MovieDto editMovie(Long movieId, MovieDto movieDto) {
-        Movie movieToBeUpdate = this.movieMapper.movieDtoToMovie(movieDto);
+        Movie movieToBeUpdate = this.movieRepository.findById(movieId).orElseThrow(() -> new CineFlexException("Cannot find movie with id: " + movieId));
+
+        for (Category category : movieToBeUpdate.getCategories()) {
+            category.getMovies().remove(movieToBeUpdate);
+        }
+
+        movieToBeUpdate.getCategories().clear();
+
+        List<Category> categoryList = new ArrayList<>();
+        for (CategoryDto categoryDto: movieDto.getCategories()) {
+            Category category = this.categoryRepository.findById(categoryDto.getId()).orElseThrow(() -> new CineFlexException("Cannot find category with id: " + categoryDto.getId()));
+            category.getMovies().add(movieToBeUpdate);
+            categoryList.add(category);
+        }
+        movieToBeUpdate.setCategories(categoryList);
+
         Movie save = this.movieRepository.save(movieToBeUpdate);
 
         return this.movieMapper.movieToDto(save);
