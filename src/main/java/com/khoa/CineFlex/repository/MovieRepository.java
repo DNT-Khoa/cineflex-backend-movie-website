@@ -11,4 +11,10 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
 
     @Query("SELECT m FROM Movie m WHERE m.movieType = 'Coming Soon'")
     List<Movie> findComingSoonMovies();
+
+    @Query("SELECT m FROM Movie m WHERE m.movieType = 'Now Playing'")
+    List<Movie> findNowPlayingMovies();
+
+    @Query(value = "SELECT * FROM movie WHERE movie_type = 'Now Playing' ORDER BY id DESC LIMIT 4", nativeQuery = true)
+    List<Movie> getFourLatestNowPlayingMovie();
 }

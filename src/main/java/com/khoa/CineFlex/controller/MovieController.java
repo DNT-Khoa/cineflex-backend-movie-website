@@ -14,10 +14,38 @@ import org.springframework.web.bind.annotation.*;
 public class MovieController {
     private final MovieService movieService;
 
-    @GetMapping("/admin/movies/comingsoon")
+    @GetMapping("/api/movies/{tmdbId}")
+    public ResponseEntity<?> getMovieByTmdbId(@PathVariable Long tmdbId) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(this.movieService.getMovieByTmdbId(tmdbId));
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/api/movies/comingsoon")
     public ResponseEntity<?> getAllComingMovies() {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(this.movieService.getAllComingMovies());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/api/movies/nowplaying")
+    public ResponseEntity<?> getAllNowPlayingMovies() {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(this.movieService.getAllNowPlayingMovies());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    // Get four latest now playing movies
+    @GetMapping("/api/movies/latest/4")
+    public ResponseEntity<?> getFourLatestNowPlayingMovies() {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(this.movieService.getFourLatestNowPlayingMovies());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }

@@ -25,8 +25,45 @@ public class MovieService {
     private final CategoryMapper categoryMapper;
 
     @Transactional(readOnly = true)
+    public MovieDto getMovieByTmdbId(Long tmdbId) {
+        Movie movie = this.movieRepository.findByTmdbId(tmdbId);
+
+        MovieDto movieDto = this.movieMapper.movieToDto(movie);
+
+        movieDto.setCategories(this.categoryMapper.listCategoryToListDto(movie.getCategories()));
+
+        return movieDto;
+    }
+
+    @Transactional(readOnly = true)
     public List<MovieDto> getAllComingMovies() {
         List<Movie> movieList = this.movieRepository.findComingSoonMovies();
+
+        List<MovieDto> movieDtoList = this.movieMapper.listMovieToListDto(movieList);
+
+        for (int i = 0; i < movieList.size(); i++) {
+            movieDtoList.get(i).setCategories(this.categoryMapper.listCategoryToListDto(movieList.get(i).getCategories()));
+        }
+
+        return movieDtoList;
+    }
+
+    @Transactional(readOnly = true)
+    public List<MovieDto> getAllNowPlayingMovies() {
+        List<Movie> movieList = this.movieRepository.findNowPlayingMovies();
+
+        List<MovieDto> movieDtoList = this.movieMapper.listMovieToListDto(movieList);
+
+        for (int i = 0; i < movieList.size(); i++) {
+            movieDtoList.get(i).setCategories(this.categoryMapper.listCategoryToListDto(movieList.get(i).getCategories()));
+        }
+
+        return movieDtoList;
+    }
+
+    @Transactional(readOnly = true)
+    public List<MovieDto> getFourLatestNowPlayingMovies() {
+        List<Movie> movieList = this.movieRepository.getFourLatestNowPlayingMovie();
 
         List<MovieDto> movieDtoList = this.movieMapper.listMovieToListDto(movieList);
 
@@ -76,6 +113,14 @@ public class MovieService {
             categoryList.add(category);
         }
         movieToBeUpdate.setCategories(categoryList);
+
+        movieToBeUpdate.setTmdbId(movieDto.getTmdbId());
+        movieToBeUpdate.setTitle(movieDto.getTitle());
+        movieToBeUpdate.setRating(movieDto.getRating());
+        movieToBeUpdate.setPosterLink(movieDto.getPosterLink());
+        movieToBeUpdate.setBackdropLink(movieDto.getBackdropLink());
+        movieToBeUpdate.setMovieType(movieDto.getMovieType());
+        movieToBeUpdate.setFilmLink(movieDto.getFilmLink());
 
         Movie save = this.movieRepository.save(movieToBeUpdate);
 
