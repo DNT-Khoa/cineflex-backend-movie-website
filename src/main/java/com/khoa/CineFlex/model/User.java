@@ -40,4 +40,13 @@ public class User {
     private boolean enabled;
 
     private Instant created;
+
+    @Nullable
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable (
+            name = "user_movie_likes",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "movie_id", referencedColumnName = "id")
+    )
+    private List<Movie> movies;
 }

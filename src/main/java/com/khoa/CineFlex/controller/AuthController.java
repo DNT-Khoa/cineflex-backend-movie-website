@@ -3,7 +3,6 @@ package com.khoa.CineFlex.controller;
 import com.khoa.CineFlex.DTO.LoginRequest;
 import com.khoa.CineFlex.DTO.RefreshTokenRequest;
 import com.khoa.CineFlex.DTO.RegisterRequest;
-import com.khoa.CineFlex.DTO.UserResponse;
 import com.khoa.CineFlex.service.AuthService;
 import com.khoa.CineFlex.service.RefreshTokenService;
 import lombok.AllArgsConstructor;

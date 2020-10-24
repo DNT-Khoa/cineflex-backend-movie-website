@@ -46,4 +46,8 @@ public class Movie {
     @Nullable
     @ManyToMany(mappedBy = "movies", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Category> categories;
+
+    @Nullable
+    @ManyToMany(mappedBy = "movies", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<User> users;
 }
