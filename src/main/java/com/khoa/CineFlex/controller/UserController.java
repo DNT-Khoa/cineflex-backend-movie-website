@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import javax.websocket.server.PathParam;
@@ -23,6 +24,15 @@ public class UserController {
     public ResponseEntity<?> getUserDetails(@RequestParam("email") String userEmail) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(this.userService.getUserDetails(userEmail));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/user/likedMovies")
+    public ResponseEntity<?> getLikedMoviesOfAUser(@RequestParam("email") String userEmail) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(this.userService.getLikedMoviesOfUser(userEmail));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }

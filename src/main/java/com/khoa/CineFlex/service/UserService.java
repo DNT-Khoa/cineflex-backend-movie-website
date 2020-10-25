@@ -2,6 +2,7 @@ package com.khoa.CineFlex.service;
 
 import com.khoa.CineFlex.DTO.*;
 import com.khoa.CineFlex.exception.CineFlexException;
+import com.khoa.CineFlex.mapper.MovieMapper;
 import com.khoa.CineFlex.mapper.UserMapper;
 import com.khoa.CineFlex.model.Movie;
 import com.khoa.CineFlex.model.User;
@@ -16,12 +17,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final MovieRepository movieRepository;
+    private final MovieMapper movieMapper;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final AuthenticationManager authenticationManager;
 
@@ -30,6 +34,12 @@ public class UserService {
     public UserDto getUserDetails(String userEmail) {
         UserDto user = this.userMapper.userToDto(this.userRepository.findByEmail(userEmail));
         return user;
+    }
+
+    @Transactional(readOnly = true)
+    public List<MovieDto> getLikedMoviesOfUser(String userEmail) {
+        User user = this.userRepository.findByEmail(userEmail);
+        return this.movieMapper.listMovieToListDto(user.getMovies());
     }
 
     @Transactional(readOnly = true)
