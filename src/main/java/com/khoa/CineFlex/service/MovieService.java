@@ -25,6 +25,32 @@ public class MovieService {
     private final CategoryMapper categoryMapper;
 
     @Transactional(readOnly = true)
+    public List<MovieDto> getAllMovies() {
+        List<Movie> movieList = this.movieRepository.findAllByOrderByIdDesc();
+
+        List<MovieDto> movieDtoList = this.movieMapper.listMovieToListDto(movieList);
+
+        for (int i = 0; i < movieList.size(); i++) {
+            movieDtoList.get(i).setCategories(this.categoryMapper.listCategoryToListDto(movieList.get(i).getCategories()));
+        }
+
+        return movieDtoList;
+    }
+
+    @Transactional(readOnly = true)
+    public List<MovieDto> getAllMoviesLimit4() {
+        List<Movie> movieList = this.movieRepository.getAllMoviesLimit4();
+
+        List<MovieDto> movieDtoList = this.movieMapper.listMovieToListDto(movieList);
+
+        for (int i = 0; i < movieList.size(); i++) {
+            movieDtoList.get(i).setCategories(this.categoryMapper.listCategoryToListDto(movieList.get(i).getCategories()));
+        }
+
+        return movieDtoList;
+    }
+
+    @Transactional(readOnly = true)
     public MovieDto getMovieByTmdbId(Long tmdbId) {
         Movie movie = this.movieRepository.findByTmdbId(tmdbId);
 
@@ -38,6 +64,19 @@ public class MovieService {
     @Transactional(readOnly = true)
     public List<MovieDto> getAllComingMovies() {
         List<Movie> movieList = this.movieRepository.findComingSoonMovies();
+
+        List<MovieDto> movieDtoList = this.movieMapper.listMovieToListDto(movieList);
+
+        for (int i = 0; i < movieList.size(); i++) {
+            movieDtoList.get(i).setCategories(this.categoryMapper.listCategoryToListDto(movieList.get(i).getCategories()));
+        }
+
+        return movieDtoList;
+    }
+
+    @Transactional(readOnly = true)
+    public List<MovieDto> getFourLatestComingSoonMovies() {
+        List<Movie> movieList = this.movieRepository.getFourLatestComingSoonMovies();
 
         List<MovieDto> movieDtoList = this.movieMapper.listMovieToListDto(movieList);
 
@@ -64,6 +103,32 @@ public class MovieService {
     @Transactional(readOnly = true)
     public List<MovieDto> getFourLatestNowPlayingMovies() {
         List<Movie> movieList = this.movieRepository.getFourLatestNowPlayingMovie();
+
+        List<MovieDto> movieDtoList = this.movieMapper.listMovieToListDto(movieList);
+
+        for (int i = 0; i < movieList.size(); i++) {
+            movieDtoList.get(i).setCategories(this.categoryMapper.listCategoryToListDto(movieList.get(i).getCategories()));
+        }
+
+        return movieDtoList;
+    }
+
+    @Transactional(readOnly = true)
+    public List<MovieDto> getTopRatedMovies() {
+        List<Movie> movieList = this.movieRepository.getTopRatedMovies();
+
+        List<MovieDto> movieDtoList = this.movieMapper.listMovieToListDto(movieList);
+
+        for (int i = 0; i < movieList.size(); i++) {
+            movieDtoList.get(i).setCategories(this.categoryMapper.listCategoryToListDto(movieList.get(i).getCategories()));
+        }
+
+        return movieDtoList;
+    }
+
+    @Transactional(readOnly = true)
+    public List<MovieDto> getTopRatedMoviesLimit4() {
+        List<Movie> movieList = this.movieRepository.getTopRatedMoviesLimit4();
 
         List<MovieDto> movieDtoList = this.movieMapper.listMovieToListDto(movieList);
 
@@ -136,5 +201,18 @@ public class MovieService {
         }
 
         this.movieRepository.deleteById(movieId);
+    }
+
+    @Transactional
+    public List<MovieDto> searchMovieByQueryKey(String key) {
+        List<Movie> movieList = this.movieRepository.searchMovieByQueryKey(key);
+
+        List<MovieDto> movieDtoList = this.movieMapper.listMovieToListDto(movieList);
+
+        for (int i = 0; i < movieList.size(); i++) {
+            movieDtoList.get(i).setCategories(this.categoryMapper.listCategoryToListDto(movieList.get(i).getCategories()));
+        }
+
+        return movieDtoList;
     }
 }

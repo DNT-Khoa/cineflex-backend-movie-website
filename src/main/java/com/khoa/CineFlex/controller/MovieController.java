@@ -7,12 +7,31 @@ import com.khoa.CineFlex.service.MovieService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
 public class MovieController {
     private final MovieService movieService;
+
+    @GetMapping("/api/movies/all")
+    public ResponseEntity<?> getAllMovies() {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(this.movieService.getAllMovies());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/api/movies/all/4")
+    public ResponseEntity<?> getAllMoviesLimit4() {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(this.movieService.getAllMoviesLimit4());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 
     @GetMapping("/api/movies/{tmdbId}")
     public ResponseEntity<?> getMovieByTmdbId(@PathVariable Long tmdbId) {
@@ -32,6 +51,15 @@ public class MovieController {
         }
     }
 
+    @GetMapping("/api/movies/comingsoon/4")
+    public ResponseEntity<?> getFourLatestComingSoonMovies() {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(this.movieService.getFourLatestComingSoonMovies());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
     @GetMapping("/api/movies/nowplaying")
     public ResponseEntity<?> getAllNowPlayingMovies() {
         try {
@@ -42,10 +70,37 @@ public class MovieController {
     }
 
     // Get four latest now playing movies
-    @GetMapping("/api/movies/latest/4")
+    @GetMapping("/api/movies/nowplaying/4")
     public ResponseEntity<?> getFourLatestNowPlayingMovies() {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(this.movieService.getFourLatestNowPlayingMovies());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("api/movies/toprated")
+    public ResponseEntity<?> getTopRatedMovies() {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(this.movieService.getTopRatedMovies());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("api/movies/toprated/4")
+    public ResponseEntity<?> getTopRatedMoviesLimit4() {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(this.movieService.getTopRatedMoviesLimit4());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("api/movies/search")
+    public ResponseEntity<?> searchMoviesByQueryKey(@RequestParam("key") String key) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(this.movieService.searchMovieByQueryKey(key));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
