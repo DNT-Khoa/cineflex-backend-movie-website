@@ -8,7 +8,10 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @AllArgsConstructor
@@ -42,11 +45,18 @@ public class User {
     private Instant created;
 
     @Nullable
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable (
             name = "user_movie_likes",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "movie_id", referencedColumnName = "id")
     )
     private List<Movie> movies;
+
+    @OneToMany(
+            mappedBy = "user",
+            cascade = { CascadeType.PERSIST, CascadeType.MERGE },
+            orphanRemoval = true
+    )
+    private Set<UserMovieRating> ratedMovies;
 }

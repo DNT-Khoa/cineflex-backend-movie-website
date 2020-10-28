@@ -6,7 +6,9 @@ import com.khoa.CineFlex.mapper.MovieMapper;
 import com.khoa.CineFlex.mapper.UserMapper;
 import com.khoa.CineFlex.model.Movie;
 import com.khoa.CineFlex.model.User;
+import com.khoa.CineFlex.model.UserMovieRating;
 import com.khoa.CineFlex.repository.MovieRepository;
+import com.khoa.CineFlex.repository.UserMovieRatingRepository;
 import com.khoa.CineFlex.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,6 +30,7 @@ public class UserService {
     private final MovieMapper movieMapper;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final UserMovieRatingRepository userMovieRatingRepository;
 
 
     @Transactional(readOnly = true)
@@ -74,6 +77,21 @@ public class UserService {
         movie.getUsers().remove(user);
     }
 
+    public boolean rateMovie(RatingDto ratingDto) {
+        User user = userRepository.findByEmail(ratingDto.getUserEmail());
+        Movie movie = movieRepository.findById(ratingDto.getMovieId()).orElseThrow(() -> new CineFlexException("Cannot find movie with id: " + ratingDto.getMovieId()));
+        int rating = ratingDto.getRating();
+
+        UserMovieRating userMovieRating = new UserMovieRating();
+        userMovieRating.setMovie(movie);
+        userMovieRating.setUser(user);
+        userMovieRating.setRating(rating);
+
+        this.userMovieRatingRepository.save(userMovieRating);
+
+        return true;
+    }
+
     @Transactional
     public UserDto editUserDetails(UserEditRequest userEditRequest) {
         if (!userEditRequest.getOldEmail().equals(userEditRequest.getNewEmail())) {
@@ -117,6 +135,16 @@ public class UserService {
         } catch (BadCredentialsException e) {
             throw new Exception("INVALID_CREDENTIALS", e);
         }
+
+        User user = this.userRepository.findByEmail(email);
+
+        // Delete all user references from the User Movie Like table
+        for (Movie movie : user.getMovies()) {
+            movie.getUsers().remove(user);
+        }
+
+        // Delete the user references in the User Movie Rating table
+        this.userMovieRatingRepository.deleteByUserEmail(email);
 
         this.userRepository.deleteByEmail(email);
     }

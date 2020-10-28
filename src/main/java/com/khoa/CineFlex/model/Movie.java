@@ -10,7 +10,10 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @AllArgsConstructor
@@ -48,6 +51,13 @@ public class Movie {
     private List<Category> categories;
 
     @Nullable
-    @ManyToMany(mappedBy = "movies", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "movies", fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE} )
     private List<User> users;
+
+    @OneToMany(
+            mappedBy = "movie",
+            cascade = { CascadeType.ALL },
+            orphanRemoval = true
+    )
+    private Set<UserMovieRating> ratedByUsers;
 }

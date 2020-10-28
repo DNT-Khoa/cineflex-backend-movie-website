@@ -1,9 +1,6 @@
 package com.khoa.CineFlex.controller;
 
-import com.khoa.CineFlex.DTO.ChangePasswordRequest;
-import com.khoa.CineFlex.DTO.LikeRequest;
-import com.khoa.CineFlex.DTO.LoginRequest;
-import com.khoa.CineFlex.DTO.UserEditRequest;
+import com.khoa.CineFlex.DTO.*;
 import com.khoa.CineFlex.exception.CineFlexException;
 import com.khoa.CineFlex.service.UserService;
 import lombok.AllArgsConstructor;
@@ -66,6 +63,16 @@ public class UserController {
         }
     }
 
+    @PostMapping("/user/rateMovie")
+    public ResponseEntity<?> userRatesMovie(@RequestBody RatingDto ratingDto) {
+        try {
+            this.userService.rateMovie(ratingDto);
+            return ResponseEntity.status(HttpStatus.OK).body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getCause());
+        }
+    }
+
     @PutMapping("/user/edit")
     public ResponseEntity<?> editUserDetails(@RequestBody UserEditRequest userEditRequest) {
         try {
@@ -95,7 +102,10 @@ public class UserController {
         try {
             this.userService.deleteAccount(email, password);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-        } catch (Exception e) {
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+        catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }

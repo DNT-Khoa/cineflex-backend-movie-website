@@ -7,8 +7,11 @@ import com.khoa.CineFlex.mapper.CategoryMapper;
 import com.khoa.CineFlex.mapper.MovieMapper;
 import com.khoa.CineFlex.model.Category;
 import com.khoa.CineFlex.model.Movie;
+import com.khoa.CineFlex.model.User;
+import com.khoa.CineFlex.model.UserMovieRating;
 import com.khoa.CineFlex.repository.CategoryRepository;
 import com.khoa.CineFlex.repository.MovieRepository;
+import com.khoa.CineFlex.repository.UserMovieRatingRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +26,7 @@ public class MovieService {
     private final MovieMapper movieMapper;
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
+    private final UserMovieRatingRepository userMovieRatingRepository;
 
     @Transactional(readOnly = true)
     public List<MovieDto> getAllMovies() {
@@ -196,9 +200,19 @@ public class MovieService {
     public void deleteMovieById(Long movieId) {
         Movie movieToBeDeleted = this.movieRepository.findById(movieId).orElseThrow(() -> new CineFlexException("Cannot find movie with id: " + movieId));
 
+        // Delete movie references in Movie Category Link table
         for (Category category : movieToBeDeleted.getCategories()) {
             category.getMovies().remove(movieToBeDeleted);
         }
+
+        // Delete movie references in User Movie Likes table
+        for (User user : movieToBeDeleted.getUsers()) {
+            user.getMovies().remove(movieToBeDeleted);
+        }
+
+        // Delete all movie references in the User Movie Rating table
+        this.userMovieRatingRepository.deleteByMovieId(movieId);
+
 
         this.movieRepository.deleteById(movieId);
     }
