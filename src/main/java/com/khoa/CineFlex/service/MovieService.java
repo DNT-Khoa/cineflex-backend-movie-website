@@ -218,6 +218,16 @@ public class MovieService {
     }
 
     @Transactional
+    public boolean checkIfMovieExitsInDatabase(Long tmdbId) {
+        Movie movie = this.movieRepository.findByTmdbId(tmdbId);
+        if (movie == null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Transactional
     public List<MovieDto> searchMovieByQueryKey(String key) {
         List<Movie> movieList = this.movieRepository.searchMovieByQueryKey(key);
 

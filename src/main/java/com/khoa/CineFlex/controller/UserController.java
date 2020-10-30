@@ -73,6 +73,34 @@ public class UserController {
         }
     }
 
+    @GetMapping("/user/check/rateMovie")
+    public ResponseEntity<?> checkIfUserHasRatedMovie(@RequestParam("email") String email, @RequestParam("movieId") Long movieId) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(this.userService.checkIfUserHasRatedMovie(email, movieId));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("user/value/rateMovie")
+    public ResponseEntity<?> getRatingOfUserForMovie(@RequestParam("email") String email, @RequestParam("movieId") Long movieId) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(this.userService.getRatingOfUserForMovie(email, movieId));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("user/deleteMovieRating")
+    public ResponseEntity<?> deleteMovieRating(@RequestParam("email") String email, @RequestParam("movieId") Long movieId) {
+        try {
+            this.userService.deleteRatingRecord(email, movieId);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
     @PutMapping("/user/edit")
     public ResponseEntity<?> editUserDetails(@RequestBody UserEditRequest userEditRequest) {
         try {
@@ -98,9 +126,9 @@ public class UserController {
     }
 
     @DeleteMapping("/user/deleteAccount")
-    public ResponseEntity<?> deleteAccount(@RequestParam("email") String email, @RequestParam("password") String password) {
+    public ResponseEntity<?> deleteAccount(@RequestParam("email") String email, @RequestParam("password") String password, @RequestParam("refreshToken") String refreshToken) {
         try {
-            this.userService.deleteAccount(email, password);
+            this.userService.deleteAccount(email, password, refreshToken);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

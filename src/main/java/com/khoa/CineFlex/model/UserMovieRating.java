@@ -18,11 +18,11 @@ public class UserMovieRating {
     @EmbeddedId
     private UserMovieRatingId id = new UserMovieRatingId();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("userId")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("movieId")
     private Movie movie;
 

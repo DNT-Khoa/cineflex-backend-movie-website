@@ -24,6 +24,15 @@ public class MovieController {
         }
     }
 
+    @GetMapping("/api/movies/checkExists/{tmdbId}")
+    public ResponseEntity<?> checkIfMovieExistsInDatabase(@PathVariable Long tmdbId) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(this.movieService.checkIfMovieExitsInDatabase(tmdbId));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
     @GetMapping("/api/movies/all/4")
     public ResponseEntity<?> getAllMoviesLimit4() {
         try {

@@ -10,9 +10,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableAsync
 @Import(SwaggerConfiguration.class)
 public class CineFlexApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(CineFlexApplication.class, args);
 	}
-
 }

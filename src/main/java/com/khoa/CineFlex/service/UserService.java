@@ -31,6 +31,7 @@ public class UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final AuthenticationManager authenticationManager;
     private final UserMovieRatingRepository userMovieRatingRepository;
+    private final RefreshTokenService refreshTokenService;
 
 
     @Transactional(readOnly = true)
@@ -77,19 +78,54 @@ public class UserService {
         movie.getUsers().remove(user);
     }
 
+    @Transactional
     public boolean rateMovie(RatingDto ratingDto) {
         User user = userRepository.findByEmail(ratingDto.getUserEmail());
         Movie movie = movieRepository.findById(ratingDto.getMovieId()).orElseThrow(() -> new CineFlexException("Cannot find movie with id: " + ratingDto.getMovieId()));
         int rating = ratingDto.getRating();
 
-        UserMovieRating userMovieRating = new UserMovieRating();
-        userMovieRating.setMovie(movie);
-        userMovieRating.setUser(user);
-        userMovieRating.setRating(rating);
+        UserMovieRating userMovieRating = this.userMovieRatingRepository.findByUserIdAndMovieId(user.getId(), movie.getId());
+
+        if (userMovieRating != null) {
+            userMovieRating.setRating(ratingDto.getRating());
+        } else {
+            userMovieRating = new UserMovieRating();
+            userMovieRating.setMovie(movie);
+            userMovieRating.setUser(user);
+            userMovieRating.setRating(rating);
+        }
 
         this.userMovieRatingRepository.save(userMovieRating);
 
         return true;
+    }
+
+    @Transactional
+    public boolean checkIfUserHasRatedMovie(String email, Long movieId) {
+        User user = this.userRepository.findByEmail(email);
+
+        UserMovieRating userMovieRating = this.userMovieRatingRepository.findByUserIdAndMovieId(user.getId(), movieId);
+
+        if (userMovieRating != null) {
+            return true;
+        }
+
+        return false;
+    }
+
+    @Transactional
+    public int getRatingOfUserForMovie(String email, Long userId) {
+        User user = this.userRepository.findByEmail(email);
+        UserMovieRating userMovieRating = this.userMovieRatingRepository.findByUserIdAndMovieId(user.getId(), userId);
+
+        return userMovieRating.getRating();
+    }
+
+    @Transactional
+    public void deleteRatingRecord(String email, Long userId) {
+        User user = this.userRepository.findByEmail(email);
+
+        this.userMovieRatingRepository.deleteByUserIdAndMovieId(user.getId(), userId);
     }
 
     @Transactional
@@ -127,7 +163,7 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteAccount(String email, String password) throws Exception {
+    public void deleteAccount(String email, String password, String refreshToken) throws Exception {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
         } catch (DisabledException e){
@@ -145,6 +181,9 @@ public class UserService {
 
         // Delete the user references in the User Movie Rating table
         this.userMovieRatingRepository.deleteByUserEmail(email);
+
+        // Delete refresh token from user
+        this.refreshTokenService.deleteRefreshToken(refreshToken);
 
         this.userRepository.deleteByEmail(email);
     }
