@@ -59,4 +59,5 @@ public class User {
             orphanRemoval = true
     )
     private Set<UserMovieRating> ratedMovies;
+
 }

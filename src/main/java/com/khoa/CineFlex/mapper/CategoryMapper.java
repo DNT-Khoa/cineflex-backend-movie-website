@@ -13,5 +13,5 @@ public interface CategoryMapper{
     Category dtoToCategory(CategoryDto categoryDto);
 
     List<CategoryDto> listCategoryToListDto(List<Category> categories);
-
+    List<Category> listDtoToListCategory(List<CategoryDto> categoryDtos);
 }

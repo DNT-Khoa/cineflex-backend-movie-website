@@ -17,6 +17,12 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
 
+    @Transactional(readOnly = true)
+    public CategoryDto getCategoryById(Long categoryId) {
+        Category category = this.categoryRepository.findById(categoryId).orElseThrow(() -> new CineFlexException("Cannot find category with id: " + categoryId));
+        return this.categoryMapper.categoryToDto(category);
+    }
+
     @Transactional
     public CategoryDto createCategory(CategoryDto categoryDto) {
         Category check = categoryRepository.findByName(categoryDto.getName());

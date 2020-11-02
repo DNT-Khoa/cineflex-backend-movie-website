@@ -27,7 +27,16 @@ public class CategoryController {
         }
     }
 
-    @GetMapping("/admin/categories")
+    @GetMapping("/api/categories/{categoryId}")
+    public ResponseEntity<?> getCategoryById(@PathVariable Long categoryId) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(categoryService.getCategoryById(categoryId));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something wrong happened!");
+        }
+    }
+
+    @GetMapping("/api/categories")
     public ResponseEntity<?> getAllCategories() {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(categoryService.getAllCategories());
