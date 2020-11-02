@@ -60,6 +60,11 @@ public class PostService {
         return this.postMapper.postToPostResponse(post);
     }
 
+    @Transactional(readOnly = true)
+    public List<PostResponse> getFourTopNews() {
+        return this.postMapper.listPostToListPostResponse(this.postRepository.getFourTopNews());
+    }
+
     @Transactional
     public PostResponse createPost(PostRequest postRequest) {
         Post post = new Post();

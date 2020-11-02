@@ -58,6 +58,15 @@ public class PostController {
         }
     }
 
+    @GetMapping("api/posts/top/4")
+    public ResponseEntity<?> getFourTopNews() {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(this.postService.getFourTopNews());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
     @PostMapping("/admin/posts")
     public ResponseEntity<?> createPost(@RequestBody PostRequest postRequest) {
         try {
