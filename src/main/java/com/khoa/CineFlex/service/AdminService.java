@@ -1,29 +1,21 @@
 package com.khoa.CineFlex.service;
 
-import com.khoa.CineFlex.DTO.ChangePasswordRequest;
-import com.khoa.CineFlex.DTO.InviteAdminEmail;
-import com.khoa.CineFlex.DTO.UserDto;
-import com.khoa.CineFlex.DTO.UserEditRequest;
+import com.khoa.CineFlex.DTO.*;
 import com.khoa.CineFlex.exception.CineFlexException;
 import com.khoa.CineFlex.mapper.UserMapper;
 import com.khoa.CineFlex.model.AdminInvitationToken;
-import com.khoa.CineFlex.model.Movie;
 import com.khoa.CineFlex.model.User;
-import com.khoa.CineFlex.model.VerificationToken;
 import com.khoa.CineFlex.repository.AdminInvitationTokenRepository;
 import com.khoa.CineFlex.repository.UserRepository;
-import com.khoa.CineFlex.repository.VerificationTokenRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.mail.MailException;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,24 +24,54 @@ import java.util.UUID;
 public class AdminService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final AuthenticationManager authenticationManager;
     private final AdminInvitationTokenRepository adminInvitationTokenRepository;
     private final MailService mailService;
+    private final AuthService authService;
 
     @Transactional
     public void inviteAdmin(String email) throws MailException{
         // First add a verification to the database
 
-        String token = this.generateAdminInvitationToken();
+        String token = this.generateAdminInvitationToken(email);
 
         InviteAdminEmail inviteAdminEmail = new InviteAdminEmail();
         inviteAdminEmail.setSubject("Yo yo! You have been invited to join CineFlex administration team!");
         inviteAdminEmail.setRecipient(email);
         inviteAdminEmail.setBody("We have all agreed to add you to our CineFlex team. You can join us by clicking the button below and finish some required tasks!");
-        inviteAdminEmail.setJoinLink("http://localhost:8080/home/adminCredentials/" + token);
+        inviteAdminEmail.setJoinLink("http://localhost:4502/home/adminCredentials/" + token);
 
         this.mailService.sendMail(inviteAdminEmail);
+    }
+
+    @Transactional
+    public boolean registerAdmin(RegisterAdminRequest registerAdminRequest) {
+        AdminInvitationToken adminInvitationToken = this.adminInvitationTokenRepository.findByToken(registerAdminRequest.getToken());
+        if (adminInvitationToken == null) {
+            throw new CineFlexException("INVALID_TOKEN");
+        }
+
+        String email = adminInvitationToken.getEmail();
+        User check = this.userRepository.findAdminByEmail(email);
+        if (check != null) {
+            throw new CineFlexException("ADMIN_ALREADY_REGISTERED");
+        }
+
+        checkAdminInvitationToken(adminInvitationToken);
+
+        // If everything is okay then register the admin
+        String firstName = registerAdminRequest.getFirstName();
+        String lastName = registerAdminRequest.getLastName();
+        String password = registerAdminRequest.getPassword();
+
+        RegisterRequest registerRequest = new RegisterRequest();
+        registerRequest.setFirstName(firstName);
+        registerRequest.setLastName(lastName);
+        registerRequest.setEmail(email);
+        registerRequest.setPassword(password);
+
+        this.authService.signup(registerRequest, "Admin");
+
+        return true;
     }
 
     @Transactional(readOnly = true)
@@ -65,15 +87,23 @@ public class AdminService {
     }
 
     @Transactional
-    public String generateAdminInvitationToken() {
+    public String generateAdminInvitationToken(String email) {
         String token = UUID.randomUUID().toString();
         AdminInvitationToken adminInvitationToken = new AdminInvitationToken();
+        adminInvitationToken.setEmail(email);
         adminInvitationToken.setToken(token);
         adminInvitationToken.setExpiryDate(Instant.now());
 
         this.adminInvitationTokenRepository.save(adminInvitationToken);
 
         return token;
+    }
+
+    private void checkAdminInvitationToken(AdminInvitationToken adminInvitationToken) {
+        // Check if token is expired (over 24 hours)
+        if (adminInvitationToken.getExpiryDate().plus(24, ChronoUnit.HOURS).isBefore(Instant.now())) {
+            throw new CineFlexException("EXPIRED_TOKEN");
+        }
     }
 
 }
