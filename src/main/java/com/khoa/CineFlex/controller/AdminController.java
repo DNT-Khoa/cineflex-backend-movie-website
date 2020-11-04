@@ -1,16 +1,44 @@
 package com.khoa.CineFlex.controller;
 
+import com.khoa.CineFlex.service.AdminService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.mail.MailException;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(path = "/admin")
+@AllArgsConstructor
 public class AdminController {
-    @GetMapping(path = "/status/check")
-    public ResponseEntity<?> getStatus() {
-        return ResponseEntity.status(200).body("You are authorized as user");
+    private final AdminService adminService;
+
+    @PostMapping("/admin/inviteAdmin")
+    public ResponseEntity<?> inviteAdmin(@RequestParam("email") String email) {
+        try {
+            this.adminService.inviteAdmin(email);
+            return ResponseEntity.status(HttpStatus.OK).body(null);
+        } catch (MailException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/admin/all")
+    public ResponseEntity<?> getAllAdmins() {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(this.adminService.getAllAdmins());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/admin/search")
+    public ResponseEntity<?> searchAdminByEmailKey(@RequestParam("key") String key) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(this.adminService.searchAdminByEmailKey(key));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 }
