@@ -10,6 +10,7 @@ import com.khoa.CineFlex.model.UserMovieRating;
 import com.khoa.CineFlex.repository.MovieRepository;
 import com.khoa.CineFlex.repository.UserMovieRatingRepository;
 import com.khoa.CineFlex.repository.UserRepository;
+import com.khoa.CineFlex.repository.VerificationTokenRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -32,6 +33,7 @@ public class UserService {
     private final AuthenticationManager authenticationManager;
     private final UserMovieRatingRepository userMovieRatingRepository;
     private final RefreshTokenService refreshTokenService;
+    private final VerificationTokenRepository verificationTokenRepository;
 
 
     @Transactional(readOnly = true)
@@ -184,6 +186,9 @@ public class UserService {
 
         // Delete refresh token from user
         this.refreshTokenService.deleteRefreshToken(refreshToken);
+
+        // Delete verification token
+        this.verificationTokenRepository.deleteAllByEmail(email);
 
         this.userRepository.deleteByEmail(email);
     }

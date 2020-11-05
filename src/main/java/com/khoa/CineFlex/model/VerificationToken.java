@@ -21,8 +21,7 @@ public class VerificationToken {
 
     private String token;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    private User user;
+    private String email;
 
     private Instant expiryDate;
 }

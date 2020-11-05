@@ -3,6 +3,8 @@ package com.khoa.CineFlex.controller;
 import com.khoa.CineFlex.DTO.LoginRequest;
 import com.khoa.CineFlex.DTO.RefreshTokenRequest;
 import com.khoa.CineFlex.DTO.RegisterRequest;
+import com.khoa.CineFlex.DTO.ResetPasswordRequest;
+import com.khoa.CineFlex.exception.CineFlexException;
 import com.khoa.CineFlex.service.AuthService;
 import com.khoa.CineFlex.service.RefreshTokenService;
 import lombok.AllArgsConstructor;
@@ -50,5 +52,30 @@ public class AuthController {
     public ResponseEntity<String> logout(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
         refreshTokenService.deleteRefreshToken(refreshTokenRequest.getRefreshToken());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Refresh Token has been successfully deleted!");
+    }
+
+    @PostMapping(path = "/forgotPassword")
+    public ResponseEntity<?> forgotPassword(@RequestParam("email") String email) {
+        try {
+            this.authService.forgotPassword(email);
+            return ResponseEntity.status(HttpStatus.OK).body(null);
+        } catch (CineFlexException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PostMapping(path = "/resetPassword")
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
+        try {
+            this.authService.resetPassword(resetPasswordRequest);
+            return ResponseEntity.status(HttpStatus.OK).body(null);
+        } catch (CineFlexException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 }
