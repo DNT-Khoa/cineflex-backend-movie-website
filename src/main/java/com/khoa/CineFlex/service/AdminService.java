@@ -4,12 +4,16 @@ import com.khoa.CineFlex.DTO.*;
 import com.khoa.CineFlex.exception.CineFlexException;
 import com.khoa.CineFlex.mapper.UserMapper;
 import com.khoa.CineFlex.model.AdminInvitationToken;
+import com.khoa.CineFlex.model.Movie;
 import com.khoa.CineFlex.model.User;
 import com.khoa.CineFlex.repository.AdminInvitationTokenRepository;
 import com.khoa.CineFlex.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.mail.MailException;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +31,8 @@ public class AdminService {
     private final AdminInvitationTokenRepository adminInvitationTokenRepository;
     private final MailService mailService;
     private final AuthService authService;
+    private final AuthenticationManager authenticationManager;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Transactional
     public void inviteAdmin(String email) throws MailException{
@@ -75,6 +81,11 @@ public class AdminService {
     }
 
     @Transactional(readOnly = true)
+    public UserDto getAdminByEmail(String email) {
+        return this.userMapper.userToDto(this.userRepository.findAdminByEmail(email));
+    }
+
+    @Transactional(readOnly = true)
     public List<UserDto> getAllAdmins() {
         List<User> users = this.userRepository.findAllAdmins();
 
@@ -104,6 +115,58 @@ public class AdminService {
         if (adminInvitationToken.getExpiryDate().plus(24, ChronoUnit.HOURS).isBefore(Instant.now())) {
             throw new CineFlexException("EXPIRED_TOKEN");
         }
+    }
+
+    @Transactional
+    public UserDto editAdminDetails(UserEditRequest userEditRequest) {
+        if (!userEditRequest.getOldEmail().equals(userEditRequest.getNewEmail())) {
+            User checkUser = this.userRepository.findByEmail(userEditRequest.getNewEmail());
+
+            if (checkUser != null) {
+                throw new CineFlexException("Email already exits in the database");
+            }
+        }
+
+        User user = this.userRepository.findByEmail(userEditRequest.getOldEmail());
+        user.setFirstName(userEditRequest.getFirstName());
+        user.setLastName(userEditRequest.getLastName());
+        user.setEmail(userEditRequest.getNewEmail());
+
+        return this.userMapper.userToDto(this.userRepository.save(user));
+    }
+
+    @Transactional
+    public void changePassword(ChangePasswordRequest changePasswordRequest) throws Exception{
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(changePasswordRequest.getEmail(), changePasswordRequest.getOldPassword()));
+        } catch (DisabledException e){
+            throw new Exception("USER_DISABLED", e);
+        } catch (BadCredentialsException e) {
+            throw new Exception("INVALID_CREDENTIALS", e);
+        }
+
+        User user = this.userRepository.findByEmail(changePasswordRequest.getEmail());
+        user.setPassword(bCryptPasswordEncoder.encode(changePasswordRequest.getNewPassword()));
+
+        this.userRepository.save(user);
+    }
+
+    @Transactional
+    public void deleteAccount(String email, String password, String refreshToken) throws Exception {
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+        } catch (DisabledException e){
+            throw new Exception("USER_DISABLED", e);
+        } catch (BadCredentialsException e) {
+            throw new Exception("INVALID_CREDENTIALS", e);
+        }
+
+        User user = this.userRepository.findByEmail(email);
+
+        // Delete all tokens in the admin invitation token table
+        this.adminInvitationTokenRepository.deleteAllByEmail(email);
+
+        this.userRepository.deleteByEmail(email);
     }
 
 }
