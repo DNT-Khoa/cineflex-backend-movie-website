@@ -2,13 +2,14 @@ package com.khoa.CineFlex.controller;
 
 import com.khoa.CineFlex.DTO.*;
 import com.khoa.CineFlex.exception.CineFlexException;
+import com.khoa.CineFlex.service.ImageService;
 import com.khoa.CineFlex.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.websocket.server.PathParam;
 
@@ -16,6 +17,7 @@ import javax.websocket.server.PathParam;
 @AllArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final ImageService imageService;
 
     @GetMapping("/user")
     public ResponseEntity<?> getUserDetails(@RequestParam("email") String userEmail) {
@@ -134,6 +136,25 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
         catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/user/changeAvatar")
+    public ResponseEntity<?> changeAvatar(@RequestParam("imageFile") MultipartFile file, @RequestParam("email") String email) {
+        try {
+            this.imageService.uploadImage(file, email);
+            return ResponseEntity.status(HttpStatus.CREATED).body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/user/getAvatar")
+    public ResponseEntity<?> getAvatar(@RequestParam("email") String email) {
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED).body(this.imageService.getAvatar(email));
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
