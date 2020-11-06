@@ -4,13 +4,11 @@ import com.khoa.CineFlex.DTO.*;
 import com.khoa.CineFlex.exception.CineFlexException;
 import com.khoa.CineFlex.mapper.MovieMapper;
 import com.khoa.CineFlex.mapper.UserMapper;
+import com.khoa.CineFlex.model.ImageModal;
 import com.khoa.CineFlex.model.Movie;
 import com.khoa.CineFlex.model.User;
 import com.khoa.CineFlex.model.UserMovieRating;
-import com.khoa.CineFlex.repository.MovieRepository;
-import com.khoa.CineFlex.repository.UserMovieRatingRepository;
-import com.khoa.CineFlex.repository.UserRepository;
-import com.khoa.CineFlex.repository.VerificationTokenRepository;
+import com.khoa.CineFlex.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -34,6 +32,7 @@ public class UserService {
     private final UserMovieRatingRepository userMovieRatingRepository;
     private final RefreshTokenService refreshTokenService;
     private final VerificationTokenRepository verificationTokenRepository;
+    private final ImageRepository imageRepository;
 
 
     @Transactional(readOnly = true)
@@ -189,6 +188,12 @@ public class UserService {
 
         // Delete verification token
         this.verificationTokenRepository.deleteAllByEmail(email);
+
+        // Delete avatar of user in the image modal table
+        ImageModal check = this.imageRepository.findByEmail(email);
+        if (check != null) {
+            this.imageRepository.deleteByEmail(email);
+        }
 
         this.userRepository.deleteByEmail(email);
     }
