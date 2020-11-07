@@ -2,6 +2,7 @@ package com.khoa.CineFlex.service;
 
 import com.khoa.CineFlex.DTO.CategoryDto;
 import com.khoa.CineFlex.DTO.MovieDto;
+import com.khoa.CineFlex.DTO.PostResponse;
 import com.khoa.CineFlex.exception.CineFlexException;
 import com.khoa.CineFlex.mapper.CategoryMapper;
 import com.khoa.CineFlex.mapper.MovieMapper;
@@ -79,6 +80,13 @@ public class MovieService {
     }
 
     @Transactional(readOnly = true)
+    public List<MovieDto> getAllMoviesByCategory(Long categoryId) {
+        Category category = this.categoryRepository.findById(categoryId).orElseThrow(() -> new CineFlexException("Cannot find category with id: " + categoryId));
+
+        return this.movieMapper.listMovieToListDto(category.getMovies());
+    }
+
+    @Transactional(readOnly = true)
     public List<MovieDto> getFourLatestComingSoonMovies() {
         List<Movie> movieList = this.movieRepository.getFourLatestComingSoonMovies();
 
@@ -89,6 +97,12 @@ public class MovieService {
         }
 
         return movieDtoList;
+    }
+
+    @Transactional(readOnly = true)
+    public int getCountMoviePerCategory(Long categoryId) {
+        Category category = this.categoryRepository.findById(categoryId).orElseThrow(() -> new CineFlexException("Cannot find category with id: " + categoryId));
+        return category.getMovies().size();
     }
 
     @Transactional(readOnly = true)

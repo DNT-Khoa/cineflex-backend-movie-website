@@ -24,6 +24,24 @@ public class MovieController {
         }
     }
 
+    @GetMapping("/api/movies/count")
+    public ResponseEntity<?> getCountPostPerCategory(@RequestParam("categoryId") Long categoryId) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(this.movieService.getCountMoviePerCategory(categoryId));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/api/movies/byCategory")
+    public ResponseEntity<?> getAllMoviesByCategory(@RequestParam("categoryId") Long categoryId) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(this.movieService.getAllMoviesByCategory(categoryId));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
     @GetMapping("/api/movies/checkExists/{tmdbId}")
     public ResponseEntity<?> checkIfMovieExistsInDatabase(@PathVariable Long tmdbId) {
         try {
