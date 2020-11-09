@@ -3,6 +3,7 @@ package com.khoa.CineFlex.service;
 import com.khoa.CineFlex.DTO.LikeRequest;
 import com.khoa.CineFlex.DTO.MovieDto;
 import com.khoa.CineFlex.DTO.UserDto;
+import com.khoa.CineFlex.DTO.UserEditRequest;
 import com.khoa.CineFlex.exception.CineFlexException;
 import com.khoa.CineFlex.mapper.MovieMapper;
 import com.khoa.CineFlex.mapper.UserMapper;
@@ -227,6 +228,12 @@ class UserServiceTest {
 
     @Test
     void editUserDetails() {
+        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), new ArrayList<>(), null);
+        UserEditRequest userEditRequest = new UserEditRequest("Khoa", "Doan", "khoa@gmail.com", "khoa@gmail.com", Instant.now());
+        Mockito.when(userRepository.findByEmail("khoa@gmail.com")).thenReturn(user);
+
+        userService.editUserDetails(userEditRequest);
+        Mockito.verify(userRepository, Mockito.times(1)).save(user);
     }
 
     @Test
