@@ -182,14 +182,37 @@ class UserServiceTest {
         UserMovieRating expectedUserMovieRating = new UserMovieRating(null, user, movie, 5);
 
         Mockito.when(userRepository.findByEmail("khoa@gmail.com")).thenReturn(user);
-        
+
         Mockito.when(userMovieRatingRepository.findByUserIdAndMovieId((long)1, (long)1)).thenReturn(expectedUserMovieRating);
 
         Assertions.assertThat(userService.checkIfUserHasRatedMovie("khoa@gmail.com", (long)1)).isTrue();
     }
 
     @Test
+    void checkIfUserHasRatedMovieReturnFalse() {
+        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), new ArrayList<>(), null);
+        Movie movie = new Movie((long)1, (long)10, "Movie 1", (double)5, "posterLink", "backdropLink", "movieType", "filmLink", null, new ArrayList<>(), null);
+
+        UserMovieRating expectedUserMovieRating = new UserMovieRating(null, user, movie, 5);
+
+        Mockito.when(userRepository.findByEmail("khoa@gmail.com")).thenReturn(user);
+
+        Mockito.when(userMovieRatingRepository.findByUserIdAndMovieId((long)1, (long)1)).thenReturn(null);
+
+        Assertions.assertThat(userService.checkIfUserHasRatedMovie("khoa@gmail.com", (long)1)).isFalse();
+    }
+
+    @Test
     void getRatingOfUserForMovie() {
+        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), new ArrayList<>(), null);
+        Movie movie = new Movie((long)1, (long)10, "Movie 1", (double)5, "posterLink", "backdropLink", "movieType", "filmLink", null, new ArrayList<>(), null);
+
+        UserMovieRating userMovieRating = new UserMovieRating(null, user, movie, 5);
+
+        Mockito.when(userRepository.findByEmail("khoa@gmail.com")).thenReturn(user);
+        Mockito.when(userMovieRatingRepository.findByUserIdAndMovieId((long)1, (long)1)).thenReturn(userMovieRating);
+
+        Assertions.assertThat(userService.getRatingOfUserForMovie("khoa@gmail.com", (long)1)).isEqualTo(5);
     }
 
     @Test
