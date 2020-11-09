@@ -217,6 +217,12 @@ class UserServiceTest {
 
     @Test
     void deleteRatingRecord() {
+        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), new ArrayList<>(), null);
+
+        Mockito.when(userRepository.findByEmail("khoa@gmail.com")).thenReturn(user);
+
+        userService.deleteRatingRecord("khoa@gmail.com", (long)1);
+        Mockito.verify(userMovieRatingRepository, Mockito.times(1)).deleteByUserIdAndMovieId((long)1, (long)1);
     }
 
     @Test
