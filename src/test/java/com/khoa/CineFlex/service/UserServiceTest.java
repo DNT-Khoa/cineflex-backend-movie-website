@@ -8,6 +8,7 @@ import com.khoa.CineFlex.mapper.MovieMapper;
 import com.khoa.CineFlex.mapper.UserMapper;
 import com.khoa.CineFlex.model.Movie;
 import com.khoa.CineFlex.model.User;
+import com.khoa.CineFlex.model.UserMovieRating;
 import com.khoa.CineFlex.repository.*;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -165,6 +166,12 @@ class UserServiceTest {
 
     @Test
     void rateMovie() {
+        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), new ArrayList<>(), null);
+        Movie movie = new Movie((long)1, (long)10, "Movie 1", (double)5, "posterLink", "backdropLink", "movieType", "filmLink", null, new ArrayList<>(), null);
+        UserMovieRating userMovieRating = new UserMovieRating(null, user, movie, 2);
+
+        userMovieRatingRepository.save(userMovieRating);
+        Mockito.verify(userMovieRatingRepository, Mockito.times(1)).save(userMovieRating);
     }
 
     @Test
