@@ -1,9 +1,6 @@
 package com.khoa.CineFlex.service;
 
-import com.khoa.CineFlex.DTO.LikeRequest;
-import com.khoa.CineFlex.DTO.MovieDto;
-import com.khoa.CineFlex.DTO.UserDto;
-import com.khoa.CineFlex.DTO.UserEditRequest;
+import com.khoa.CineFlex.DTO.*;
 import com.khoa.CineFlex.exception.CineFlexException;
 import com.khoa.CineFlex.mapper.MovieMapper;
 import com.khoa.CineFlex.mapper.UserMapper;
@@ -237,7 +234,13 @@ class UserServiceTest {
     }
 
     @Test
-    void changePassword() {
+    void changePassword() throws Exception {
+        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), new ArrayList<>(), null);
+        ChangePasswordRequest changePasswordRequest = new ChangePasswordRequest("khoa@gmail.com", "khoa", "khoa1");
+        Mockito.when(userRepository.findByEmail("khoa@gmail.com")).thenReturn(user);
+
+        userService.changePassword(changePasswordRequest);
+        Mockito.verify(userRepository, Mockito.times(1)).save(user);
     }
 
     @Test
