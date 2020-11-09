@@ -1,8 +1,12 @@
 package com.khoa.CineFlex.service;
 
+import com.khoa.CineFlex.DTO.LikeRequest;
+import com.khoa.CineFlex.DTO.MovieDto;
 import com.khoa.CineFlex.DTO.UserDto;
+import com.khoa.CineFlex.exception.CineFlexException;
 import com.khoa.CineFlex.mapper.MovieMapper;
 import com.khoa.CineFlex.mapper.UserMapper;
+import com.khoa.CineFlex.model.Movie;
 import com.khoa.CineFlex.model.User;
 import com.khoa.CineFlex.repository.*;
 import org.assertj.core.api.Assertions;
@@ -16,6 +20,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -62,19 +68,99 @@ class UserServiceTest {
     }
 
     @Test
-    void getLikedMoviesOfUser() {
+    void getLikedMoviesOfUserTest() {
+        List<Movie> movieList = new ArrayList<>();
+        movieList.add(new Movie((long)1, (long)10, "Film 1", (double)20, "posterLink", "backdropLink", "movieType", "filmLink", null, null, null));
+        movieList.add(new Movie((long)2, (long)11, "Film 2", (double)20, "posterLink", "backdropLink", "movieType", "filmLink", null, null, null));
+
+        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), movieList, null);
+
+
+        List<MovieDto> expectedMovieDtoList = new ArrayList<>();
+        expectedMovieDtoList.add(new MovieDto((long)1, (long)10, "Film 1", (double) 20, "posterLink", "backdropLink", "movieType", "filmLink", null));
+        expectedMovieDtoList.add(new MovieDto((long)2, (long)11, "Film 2", (double) 20, "posterLink", "backdropLink", "movieType", "filmLink", null));
+
+        Mockito.when(userRepository.findByEmail("khoa@gmail.com")).thenReturn(user);
+        Mockito.when(movieMapper.listMovieToListDto(movieList)).thenReturn(expectedMovieDtoList);
+
+        List<MovieDto> actualMovieDtoList = userService.getLikedMoviesOfUser("khoa@gmail.com");
+
+        Assertions.assertThat(actualMovieDtoList.size()).isEqualTo(expectedMovieDtoList.size());
     }
 
     @Test
-    void checkIfUserHasLikedMovie() {
+    void checkIfUserHasLikedMovieReturnTrue() {
+        Movie movie = new Movie((long)1, (long)10, "Movie 1", (double)5, "posterLink", "backdropLink", "movieType", "filmLink", null, null, null);
+        List<Movie> movieList = new ArrayList<>();
+        movieList.add(movie);
+        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), movieList, null);
+
+        LikeRequest likeRequest = new LikeRequest("khoa@gmail.com", (long)1);
+
+        Mockito.when(movieRepository.findById((long)1)).thenReturn(java.util.Optional.of(movie));
+        Mockito.when(userRepository.findByEmail("khoa@gmail.com")).thenReturn(user);
+
+        Assertions.assertThat(userService.checkIfUserHasLikedMovie(likeRequest)).isTrue();
     }
 
     @Test
-    void likeMovie() {
+    void checkIfUserHasLikedMovieReturnFalse() {
+        Movie movie = new Movie((long)1, (long)10, "Movie 1", (double)5, "posterLink", "backdropLink", "movieType", "filmLink", null, null, null);
+        List<Movie> movieList = new ArrayList<>();
+        movieList.add(movie);
+        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), new ArrayList<>(), null);
+
+        LikeRequest likeRequest = new LikeRequest("khoa@gmail.com", (long)1);
+
+        Mockito.when(movieRepository.findById((long)1)).thenReturn(java.util.Optional.of(movie));
+        Mockito.when(userRepository.findByEmail("khoa@gmail.com")).thenReturn(user);
+
+        Assertions.assertThat(userService.checkIfUserHasLikedMovie(likeRequest)).isFalse();
     }
 
     @Test
-    void unlikeMovie() {
+    void checkIfUserHasLikedMovieThrowsException() {
+        LikeRequest likeRequest = new LikeRequest("khoa@gmail.com", (long)1);
+
+        Mockito.when(movieRepository.findById((long)1)).thenThrow(new CineFlexException("Cannot find user with id 1"));
+
+        Assertions.assertThatThrownBy(() -> {
+            userService.checkIfUserHasLikedMovie(likeRequest);
+        }).isInstanceOf(CineFlexException.class).hasMessage("Cannot find user with id 1");
+    }
+
+    @Test
+    void likeMovieTest() {
+        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), new ArrayList<>(), null);
+        Movie movie = new Movie((long)1, (long)10, "Movie 1", (double)5, "posterLink", "backdropLink", "movieType", "filmLink", null, new ArrayList<>(), null);
+
+        LikeRequest likeRequest = new LikeRequest("khoa@gmail.com", (long)1);
+
+        Mockito.when(movieRepository.findById((long)1)).thenReturn(java.util.Optional.of(movie));
+        Mockito.when(userRepository.findByEmail("khoa@gmail.com")).thenReturn(user);
+
+        userService.likeMovie(likeRequest);
+
+        Mockito.verify(userRepository, Mockito.times(1)).save(user);
+    }
+
+    @Test
+    void unlikeMovieTest() {
+        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), new ArrayList<>(), null);
+        Movie movie = new Movie((long)1, (long)10, "Movie 1", (double)5, "posterLink", "backdropLink", "movieType", "filmLink", null, new ArrayList<>(), null);
+
+        user.getMovies().add(movie);
+        movie.getUsers().add(user);
+
+        LikeRequest likeRequest = new LikeRequest("khoa@gmail.com", (long)1);
+
+        Mockito.when(userRepository.findByEmail("khoa@gmail.com")).thenReturn(user);
+        Mockito.when(movieRepository.findById((long)1)).thenReturn(java.util.Optional.of(movie));
+
+        userService.unlikeMovie(likeRequest);
+
+        Assertions.assertThat(user.getMovies().contains(movie)).isFalse();
+        Assertions.assertThat(movie.getUsers().contains(user)).isFalse();
     }
 
     @Test
