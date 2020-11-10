@@ -27,7 +27,7 @@ public class CategoryService {
     public CategoryDto createCategory(CategoryDto categoryDto) {
         Category check = categoryRepository.findByName(categoryDto.getName());
         if (check != null) {
-            throw new CineFlexException("Category name already exits!");
+            throw new CineFlexException("Category name already exists!");
         }
 
         Category category = new Category();
