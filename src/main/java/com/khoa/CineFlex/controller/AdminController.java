@@ -27,6 +27,15 @@ public class AdminController {
         }
     }
 
+    @GetMapping("/admin/countUsers")
+    public ResponseEntity<?> getCountAllUsers() {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(this.adminService.getCountAllUsers());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
     @PostMapping("/admin/inviteAdmin")
     public ResponseEntity<?> inviteAdmin(@RequestParam("email") String email) {
         try {

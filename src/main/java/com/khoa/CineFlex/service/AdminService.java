@@ -169,4 +169,9 @@ public class AdminService {
         this.userRepository.deleteByEmail(email);
     }
 
+    @Transactional(readOnly = true)
+    public int getCountAllUsers() {
+        return this.userRepository.countAllUsers();
+    }
+
 }

@@ -19,4 +19,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findAllAdmins();
 
     void deleteByEmail(String email);
+
+    @Query("SELECT count(u.id) FROM User u WHERE u.role = 'User'")
+    int countAllUsers();
 }

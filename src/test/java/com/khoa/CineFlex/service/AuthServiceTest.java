@@ -2,7 +2,6 @@ package com.khoa.CineFlex.service;
 
 import com.khoa.CineFlex.DTO.LoginRequest;
 import com.khoa.CineFlex.DTO.RegisterRequest;
-import com.khoa.CineFlex.DTO.ResetPasswordRequest;
 import com.khoa.CineFlex.exception.CineFlexException;
 import com.khoa.CineFlex.mapper.UserMapper;
 import com.khoa.CineFlex.model.User;
@@ -17,16 +16,12 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
