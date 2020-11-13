@@ -40,6 +40,7 @@ public class AuthController {
     }
 
     @PostMapping(path = "/refresh/token")
+    @ResponseBody
     public ResponseEntity<?> refreshTokens(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(authService.refreshToken(refreshTokenRequest));
