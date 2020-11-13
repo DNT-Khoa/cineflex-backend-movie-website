@@ -2,12 +2,15 @@ package com.khoa.CineFlex.controller;
 
 import com.khoa.CineFlex.DTO.ChangePasswordRequest;
 import com.khoa.CineFlex.DTO.RegisterAdminRequest;
+import com.khoa.CineFlex.DTO.UserDto;
 import com.khoa.CineFlex.DTO.UserEditRequest;
 import com.khoa.CineFlex.exception.CineFlexException;
 import com.khoa.CineFlex.service.AdminService;
 import com.khoa.CineFlex.service.AuthService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -18,7 +21,8 @@ import org.springframework.web.bind.annotation.*;
 public class AdminController {
     private final AdminService adminService;
 
-    @GetMapping("/admin")
+    @ResponseBody
+    @GetMapping(value = "/admin", produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<?> getAdminByEmail(@RequestParam("email") String email) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(this.adminService.getAdminByEmail(email));
