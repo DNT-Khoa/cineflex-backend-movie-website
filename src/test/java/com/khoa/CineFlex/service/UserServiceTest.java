@@ -248,7 +248,7 @@ class UserServiceTest {
 
     @Test
     void deleteAccount() throws Exception {
-        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), new ArrayList<>(), null, null);
+        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), new ArrayList<>(), null, new ArrayList<>());
 
         Mockito.when(userRepository.findByEmail("khoa@gmail.com")).thenReturn(user);
 
