@@ -60,4 +60,7 @@ public class User {
     )
     private Set<UserMovieRating> ratedMovies;
 
+
+    @ManyToMany(mappedBy = "likedByUsers", fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE})
+    private List<Comment> likedComments;
 }

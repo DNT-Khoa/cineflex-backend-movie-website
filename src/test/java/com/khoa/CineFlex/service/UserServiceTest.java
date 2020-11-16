@@ -15,6 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -47,15 +48,17 @@ class UserServiceTest {
     private VerificationTokenRepository verificationTokenRepository;
     @Mock
     private ImageRepository imageRepository;
+    @Mock
+    private CommentRepository commentRepository;
 
     @BeforeEach
     public void setup() {
-        userService = new UserService(userRepository, userMapper, movieRepository, movieMapper, bCryptPasswordEncoder, authenticationManager, userMovieRatingRepository, refreshTokenService, verificationTokenRepository, imageRepository);
+        userService = new UserService(userRepository, userMapper, movieRepository, movieMapper, bCryptPasswordEncoder, authenticationManager, userMovieRatingRepository, refreshTokenService, verificationTokenRepository, imageRepository, commentRepository);
     }
 
     @Test
     void getUserDetailsTest() {
-        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), null, null);
+        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), null, null, null);
         UserDto expectedUserResponse = new UserDto("Khoa", "Doan", "khoa@gmail.com", Instant.now());
 
         Mockito.when(userRepository.findByEmail("khoa@gmail.com")).thenReturn(user);
@@ -72,7 +75,7 @@ class UserServiceTest {
         movieList.add(new Movie((long)1, (long)10, "Film 1", (double)20, "posterLink", "backdropLink", "movieType", "filmLink", null, null, null));
         movieList.add(new Movie((long)2, (long)11, "Film 2", (double)20, "posterLink", "backdropLink", "movieType", "filmLink", null, null, null));
 
-        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), movieList, null);
+        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), movieList, null, null);
 
 
         List<MovieDto> expectedMovieDtoList = new ArrayList<>();
@@ -92,7 +95,7 @@ class UserServiceTest {
         Movie movie = new Movie((long)1, (long)10, "Movie 1", (double)5, "posterLink", "backdropLink", "movieType", "filmLink", null, null, null);
         List<Movie> movieList = new ArrayList<>();
         movieList.add(movie);
-        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), movieList, null);
+        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), movieList, null, null);
 
         LikeRequest likeRequest = new LikeRequest("khoa@gmail.com", (long)1);
 
@@ -107,7 +110,7 @@ class UserServiceTest {
         Movie movie = new Movie((long)1, (long)10, "Movie 1", (double)5, "posterLink", "backdropLink", "movieType", "filmLink", null, null, null);
         List<Movie> movieList = new ArrayList<>();
         movieList.add(movie);
-        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), new ArrayList<>(), null);
+        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), new ArrayList<>(), null, null);
 
         LikeRequest likeRequest = new LikeRequest("khoa@gmail.com", (long)1);
 
@@ -130,7 +133,7 @@ class UserServiceTest {
 
     @Test
     void likeMovieTest() {
-        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), new ArrayList<>(), null);
+        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), new ArrayList<>(), null, null);
         Movie movie = new Movie((long)1, (long)10, "Movie 1", (double)5, "posterLink", "backdropLink", "movieType", "filmLink", null, new ArrayList<>(), null);
 
         LikeRequest likeRequest = new LikeRequest("khoa@gmail.com", (long)1);
@@ -145,7 +148,7 @@ class UserServiceTest {
 
     @Test
     void unlikeMovieTest() {
-        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), new ArrayList<>(), null);
+        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), new ArrayList<>(), null, null);
         Movie movie = new Movie((long)1, (long)10, "Movie 1", (double)5, "posterLink", "backdropLink", "movieType", "filmLink", null, new ArrayList<>(), null);
 
         user.getMovies().add(movie);
@@ -164,7 +167,7 @@ class UserServiceTest {
 
     @Test
     void rateMovie() {
-        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), new ArrayList<>(), null);
+        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), new ArrayList<>(), null, null);
         Movie movie = new Movie((long)1, (long)10, "Movie 1", (double)5, "posterLink", "backdropLink", "movieType", "filmLink", null, new ArrayList<>(), null);
         UserMovieRating userMovieRating = new UserMovieRating(null, user, movie, 2);
 
@@ -174,7 +177,7 @@ class UserServiceTest {
 
     @Test
     void checkIfUserHasRatedMovieReturnTrue() {
-        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), new ArrayList<>(), null);
+        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), new ArrayList<>(), null, null);
         Movie movie = new Movie((long)1, (long)10, "Movie 1", (double)5, "posterLink", "backdropLink", "movieType", "filmLink", null, new ArrayList<>(), null);
 
         UserMovieRating expectedUserMovieRating = new UserMovieRating(null, user, movie, 5);
@@ -188,7 +191,7 @@ class UserServiceTest {
 
     @Test
     void checkIfUserHasRatedMovieReturnFalse() {
-        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), new ArrayList<>(), null);
+        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), new ArrayList<>(), null, null);
         Movie movie = new Movie((long)1, (long)10, "Movie 1", (double)5, "posterLink", "backdropLink", "movieType", "filmLink", null, new ArrayList<>(), null);
 
         UserMovieRating expectedUserMovieRating = new UserMovieRating(null, user, movie, 5);
@@ -202,7 +205,7 @@ class UserServiceTest {
 
     @Test
     void getRatingOfUserForMovie() {
-        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), new ArrayList<>(), null);
+        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), new ArrayList<>(), null, null);
         Movie movie = new Movie((long)1, (long)10, "Movie 1", (double)5, "posterLink", "backdropLink", "movieType", "filmLink", null, new ArrayList<>(), null);
 
         UserMovieRating userMovieRating = new UserMovieRating(null, user, movie, 5);
@@ -215,7 +218,7 @@ class UserServiceTest {
 
     @Test
     void deleteRatingRecord() {
-        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), new ArrayList<>(), null);
+        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), new ArrayList<>(), null, null);
 
         Mockito.when(userRepository.findByEmail("khoa@gmail.com")).thenReturn(user);
 
@@ -225,7 +228,7 @@ class UserServiceTest {
 
     @Test
     void editUserDetails() {
-        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), new ArrayList<>(), null);
+        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), new ArrayList<>(), null, null);
         UserEditRequest userEditRequest = new UserEditRequest("Khoa", "Doan", "khoa@gmail.com", "khoa@gmail.com", Instant.now());
         Mockito.when(userRepository.findByEmail("khoa@gmail.com")).thenReturn(user);
 
@@ -235,7 +238,7 @@ class UserServiceTest {
 
     @Test
     void changePassword() throws Exception {
-        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), new ArrayList<>(), null);
+        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), new ArrayList<>(), null, null);
         ChangePasswordRequest changePasswordRequest = new ChangePasswordRequest("khoa@gmail.com", "khoa", "khoa1");
         Mockito.when(userRepository.findByEmail("khoa@gmail.com")).thenReturn(user);
 
@@ -245,7 +248,7 @@ class UserServiceTest {
 
     @Test
     void deleteAccount() throws Exception {
-        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), new ArrayList<>(), null);
+        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), new ArrayList<>(), null, null);
 
         Mockito.when(userRepository.findByEmail("khoa@gmail.com")).thenReturn(user);
 

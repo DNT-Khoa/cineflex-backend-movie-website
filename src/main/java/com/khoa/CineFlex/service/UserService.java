@@ -4,10 +4,7 @@ import com.khoa.CineFlex.DTO.*;
 import com.khoa.CineFlex.exception.CineFlexException;
 import com.khoa.CineFlex.mapper.MovieMapper;
 import com.khoa.CineFlex.mapper.UserMapper;
-import com.khoa.CineFlex.model.ImageModal;
-import com.khoa.CineFlex.model.Movie;
-import com.khoa.CineFlex.model.User;
-import com.khoa.CineFlex.model.UserMovieRating;
+import com.khoa.CineFlex.model.*;
 import com.khoa.CineFlex.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,6 +30,7 @@ public class UserService {
     private final RefreshTokenService refreshTokenService;
     private final VerificationTokenRepository verificationTokenRepository;
     private final ImageRepository imageRepository;
+    private final CommentRepository commentRepository;
 
 
     @Transactional(readOnly = true)
@@ -193,6 +191,18 @@ public class UserService {
         ImageModal check = this.imageRepository.findByEmail(email);
         if (check != null) {
             this.imageRepository.deleteByEmail(email);
+        }
+
+        // Delete all comments of user and all comments of people reply to the comment of that user
+        List<Comment> comments = this.commentRepository.getAllRootCommentsOfUser(user.getEmail());
+
+        for (Comment comment : comments) {
+            this.commentRepository.deleteAllCommentsOfUser(comment.getPath());
+        }
+
+        // Remove all references of the user from all the comments they have liked
+        for (Comment comment : user.getLikedComments()) {
+            comment.getLikedByUsers().remove(user);
         }
 
         this.userRepository.deleteByEmail(email);

@@ -21,7 +21,7 @@ class UserDetailsServiceImpTest {
     void loadUserByUsername() {
         UserDetailsServiceImp userDetailsServiceImp = new UserDetailsServiceImp(userRepository);
 
-        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), null, null);
+        User user = new User((long) 1, "Khoa", "Doan", "khoa@gmail.com", "12345", "User", true, Instant.now(), null, null, null);
         Mockito.when(userRepository.findByEmail("khoa@gmail.com")).thenReturn(user);
 
         org.springframework.security.core.userdetails.User actualUser = (org.springframework.security.core.userdetails.User) userDetailsServiceImp.loadUserByUsername("khoa@gmail.com");

@@ -56,7 +56,7 @@ class AuthServiceTest {
     void signupReturnFalse() {
         RegisterRequest registerRequest = new RegisterRequest("Khoa", "Doan", "khoa@gmail.com", "khoa");
 
-        User user = new User((long)1, "Khoa", "Doan", "khoa@gmail.com", "khoa", "User", true, Instant.now(), new ArrayList<>(), new HashSet<>());
+        User user = new User((long)1, "Khoa", "Doan", "khoa@gmail.com", "khoa", "User", true, Instant.now(), new ArrayList<>(), new HashSet<>(), new ArrayList<>());
 
         Mockito.when(userMapper.registerRequestToUser(registerRequest)).thenReturn(user);
         Mockito.when(userRepository.findByEmail("khoa@gmail.com")).thenReturn(user);
@@ -68,7 +68,7 @@ class AuthServiceTest {
     void signupReturnTrue() {
         RegisterRequest registerRequest = new RegisterRequest("Khoa", "Doan", "khoa@gmail.com", "khoa");
 
-        User user = new User((long)1, "Khoa", "Doan", "khoa@gmail.com", "khoa", "User", true, Instant.now(), new ArrayList<>(), new HashSet<>());
+        User user = new User((long)1, "Khoa", "Doan", "khoa@gmail.com", "khoa", "User", true, Instant.now(), new ArrayList<>(), new HashSet<>(), new ArrayList<>());
 
         Mockito.when(userMapper.registerRequestToUser(registerRequest)).thenReturn(user);
         Mockito.when(userRepository.findByEmail("khoa@gmail.com")).thenReturn(null);
@@ -81,7 +81,7 @@ class AuthServiceTest {
     @Test
     void loginThrowCineFlexException() {
         LoginRequest loginRequest = new LoginRequest("khoa@gmail.com", "khoa");
-        User user = new User((long)1, "Khoa", "Doan", "khoa@gmail.com", "khoa", "User", true, Instant.now(), new ArrayList<>(), new HashSet<>());
+        User user = new User((long)1, "Khoa", "Doan", "khoa@gmail.com", "khoa", "User", true, Instant.now(), new ArrayList<>(), new HashSet<>(), new ArrayList<>());
 
         Mockito.when(userRepository.findByEmail("khoa@gmail.com")).thenReturn(null);
 

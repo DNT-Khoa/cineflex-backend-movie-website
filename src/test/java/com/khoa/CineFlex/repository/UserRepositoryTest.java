@@ -25,7 +25,7 @@ public class UserRepositoryTest extends BaseTest {
 
     @Test
     public void shouldSaveUser() {
-        User expectedUser = new User(null, "Khoa", "Doan", "khoa@gmail.com", "khoa", "User", true, Instant.now(), new ArrayList<>(), new HashSet<>());
+        User expectedUser = new User(null, "Khoa", "Doan", "khoa@gmail.com", "khoa", "User", true, Instant.now(), new ArrayList<>(), new HashSet<>(), new ArrayList<>());
 
         User actualUser = this.userRepository.save(expectedUser);
 
