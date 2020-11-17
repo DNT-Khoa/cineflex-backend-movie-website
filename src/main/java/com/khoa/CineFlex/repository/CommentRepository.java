@@ -21,9 +21,9 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("SELECT c FROM Comment c WHERE c.email = ?1")
     List<Comment> getAllCommentsOfUser(String email);
 
-    @Query("SELECT c FROM Comment c WHERE c.movieOrPostId = ?1 AND c.commentType = 'Movie'")
+    @Query("SELECT c FROM Comment c WHERE c.movieOrPostId = ?1 AND c.commentType = 'Movie' ORDER BY c.path")
     List<Comment> getAllCommentsByMovieId(Long movieId);
 
-    @Query("SELECT c FROM Comment c WHERE c.movieOrPostId = ?1 AND c.commentType = 'News'")
+    @Query("SELECT c FROM Comment c WHERE c.movieOrPostId = ?1 AND c.commentType = 'News' ORDER BY c.path")
     List<Comment> getAllCommentsByPostId(Long postId);
 }
