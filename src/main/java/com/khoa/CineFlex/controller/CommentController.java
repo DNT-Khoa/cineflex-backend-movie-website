@@ -21,8 +21,17 @@ public class CommentController {
         }
     }
 
-    @PostMapping("/user/comments/likeComment")
-    public ResponseEntity<?> userLikeComment(Long commentId, @RequestParam("email")String email) {
+    @GetMapping("/user/comments/{commentId}")
+    public ResponseEntity<?> getCommentById(@PathVariable Long commentId) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(this.commentService.getCommentById(commentId));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/user/comments/likeComment/{commentId}")
+    public ResponseEntity<?> userLikeComment(@PathVariable Long commentId, @RequestParam("email")String email) {
         try {
             this.commentService.likeComment(commentId, email);
             return ResponseEntity.status(HttpStatus.OK).body(null);
@@ -31,8 +40,8 @@ public class CommentController {
         }
     }
 
-    @PostMapping("/user/comments/unLikeComment")
-    public ResponseEntity<?> userUnLikeComment(Long commentId, @RequestParam("email") String email) {
+    @PostMapping("/user/comments/unLikeComment/{commentId}")
+    public ResponseEntity<?> userUnLikeComment(@PathVariable Long commentId, @RequestParam("email") String email) {
         try {
             this.commentService.unlikeComment(commentId, email);
             return ResponseEntity.status(HttpStatus.OK).body(null);

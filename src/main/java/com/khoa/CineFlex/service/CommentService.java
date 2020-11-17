@@ -49,8 +49,43 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
+    public CommentResponse getCommentById(Long commentId) {
+        Comment comment = this.commentRepository.findById(commentId).orElseThrow(() -> new CineFlexException("Cannot find comment with id: " + commentId));
+
+        CommentResponse commentResponse = new CommentResponse();
+        commentResponse.setId(comment.getId());
+        commentResponse.setContent(comment.getContent());
+        commentResponse.setCommentDate(comment.getCommentDate());
+        commentResponse.setPath(comment.getPath());
+        commentResponse.setEmail(comment.getEmail());
+        commentResponse.setLikedByUsers(this.userMapper.listUsersToListDtos(comment.getLikedByUsers()));
+
+        return commentResponse;
+    }
+
+    @Transactional(readOnly = true)
     public List<CommentResponse> getAllCommentsByMovieId(Long movieId) {
         List<Comment> comments = this.commentRepository.getAllCommentsByMovieId(movieId);
+        List<CommentResponse> commentResponses = new ArrayList<>();
+
+        for (Comment comment : comments) {
+            CommentResponse commentResponse = new CommentResponse();
+            commentResponse.setId(comment.getId());
+            commentResponse.setContent(comment.getContent());
+            commentResponse.setCommentDate(comment.getCommentDate());
+            commentResponse.setPath(comment.getPath());
+            commentResponse.setEmail(comment.getEmail());
+            commentResponse.setLikedByUsers(this.userMapper.listUsersToListDtos(comment.getLikedByUsers()));
+
+            commentResponses.add(commentResponse);
+        }
+
+        return commentResponses;
+    }
+
+    @Transactional(readOnly = true)
+    public List<CommentResponse> getAllCommentsByPostId(Long postId) {
+        List<Comment> comments = this.commentRepository.getAllCommentsByPostId(postId);
         List<CommentResponse> commentResponses = new ArrayList<>();
 
         for (Comment comment : comments) {
@@ -90,23 +125,7 @@ public class CommentService {
         this.commentRepository.save(comment);
     }
 
-    @Transactional(readOnly = true)
-    public List<CommentResponse> getAllCommentsByPostId(Long postId) {
-        List<Comment> comments = this.commentRepository.getAllCommentsByPostId(postId);
-        List<CommentResponse> commentResponses = new ArrayList<>();
 
-        for (Comment comment : comments) {
-            CommentResponse commentResponse = new CommentResponse();
-            commentResponse.setId(comment.getId());
-            commentResponse.setContent(comment.getContent());
-            commentResponse.setCommentDate(comment.getCommentDate());
-            commentResponse.setPath(comment.getPath());
-            commentResponse.setEmail(comment.getEmail());
-            commentResponse.setLikedByUsers(this.userMapper.listUsersToListDtos(comment.getLikedByUsers()));
-        }
-
-        return commentResponses;
-    }
 
     @Transactional
     public void deleteComment(Long commentId) {
