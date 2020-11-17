@@ -6,8 +6,7 @@ import com.khoa.CineFlex.mapper.UserMapper;
 import com.khoa.CineFlex.model.AdminInvitationToken;
 import com.khoa.CineFlex.model.Movie;
 import com.khoa.CineFlex.model.User;
-import com.khoa.CineFlex.repository.AdminInvitationTokenRepository;
-import com.khoa.CineFlex.repository.UserRepository;
+import com.khoa.CineFlex.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.mail.MailException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,6 +32,9 @@ public class AdminService {
     private final AuthService authService;
     private final AuthenticationManager authenticationManager;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final MovieRepository movieRepository;
+    private final CommentRepository commentRepository;
+    private final PostRepository postRepository;
 
     @Transactional
     public void inviteAdmin(String email) throws MailException{
@@ -174,4 +176,18 @@ public class AdminService {
         return this.userRepository.countAllUsers();
     }
 
+    @Transactional(readOnly = true)
+    public int getCountAllMovies() {
+        return this.movieRepository.getCountAllMovies();
+    }
+
+    @Transactional(readOnly = true)
+    public int getCountAllPosts() {
+        return this.postRepository.getCountAllPosts();
+    }
+
+    @Transactional(readOnly = true)
+    public int getCountAllComments() {
+        return this.commentRepository.getCountAllComments();
+    }
 }

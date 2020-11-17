@@ -34,4 +34,7 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
 
     @Query("SELECT m FROM Movie m WHERE m.title LIKE %?1%")
     List<Movie> searchMovieByQueryKey(String key);
+
+    @Query("SELECT COUNT(m.id) FROM Movie m WHERE m.movieType = 'Now Playing'")
+    int getCountAllMovies();
 }

@@ -40,6 +40,33 @@ public class AdminController {
         }
     }
 
+    @GetMapping("/admin/countMovies")
+    public ResponseEntity<?> getCountAllMovies() {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(this.adminService.getCountAllMovies());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/admin/countPosts")
+    public ResponseEntity<?> getCountAllPosts() {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(this.adminService.getCountAllPosts());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/admin/countComments")
+    public ResponseEntity<?> getCountAllComments() {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(this.adminService.getCountAllComments());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
     @PostMapping("/admin/inviteAdmin")
     public ResponseEntity<?> inviteAdmin(@RequestParam("email") String email) {
         try {

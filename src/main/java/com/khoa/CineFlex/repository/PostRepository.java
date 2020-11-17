@@ -14,4 +14,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query(value = "SELECT * FROM post p ORDER BY p.views DESC LIMIT 4", nativeQuery = true)
     List<Post> getFourTopNews();
+
+    @Query("SELECT COUNT(p.id) FROM Post p")
+    int getCountAllPosts();
 }
