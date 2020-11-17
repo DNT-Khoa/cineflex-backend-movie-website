@@ -6,6 +6,7 @@ import com.khoa.CineFlex.mapper.MovieMapper;
 import com.khoa.CineFlex.model.Category;
 import com.khoa.CineFlex.model.Movie;
 import com.khoa.CineFlex.repository.CategoryRepository;
+import com.khoa.CineFlex.repository.CommentRepository;
 import com.khoa.CineFlex.repository.MovieRepository;
 import com.khoa.CineFlex.repository.UserMovieRatingRepository;
 import org.assertj.core.api.Assertions;
@@ -33,10 +34,12 @@ class MovieServiceTest {
     private CategoryMapper categoryMapper;
     @Mock
     private UserMovieRatingRepository userMovieRatingRepository;
+    @Mock
+    private CommentRepository commentRepository;
 
     @BeforeEach
     public void setup() {
-        movieService = new MovieService(movieRepository, movieMapper, categoryRepository, categoryMapper, userMovieRatingRepository);
+        movieService = new MovieService(movieRepository, movieMapper, categoryRepository, categoryMapper, userMovieRatingRepository, commentRepository);
     }
 
     @Test

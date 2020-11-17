@@ -34,8 +34,8 @@ public class CommentService {
         comment.setContent(commentRequest.getContent());
         comment.setCommentDate(Instant.now());
         comment.setCommentType(commentRequest.getCommentType());
-        comment.setMovieOrPostId(comment.getMovieOrPostId());
-        comment.setParentCommentId(comment.getParentCommentId());
+        comment.setMovieOrPostId(commentRequest.getMovieOrPostId());
+        comment.setParentCommentId(commentRequest.getParentCommentId());
         comment.setLikedByUsers(new ArrayList<>());
         comment.setEmail(email);
 
@@ -49,8 +49,8 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public List<CommentResponse> getAllCommentsByTmdbId(Long tmdbId) {
-        List<Comment> comments = this.commentRepository.getAllCommentsByTmdbId(tmdbId);
+    public List<CommentResponse> getAllCommentsByMovieId(Long movieId) {
+        List<Comment> comments = this.commentRepository.getAllCommentsByMovieId(movieId);
         List<CommentResponse> commentResponses = new ArrayList<>();
 
         for (Comment comment : comments) {
@@ -61,6 +61,8 @@ public class CommentService {
             commentResponse.setPath(comment.getPath());
             commentResponse.setEmail(comment.getEmail());
             commentResponse.setLikedByUsers(this.userMapper.listUsersToListDtos(comment.getLikedByUsers()));
+
+            commentResponses.add(commentResponse);
         }
 
         return commentResponses;

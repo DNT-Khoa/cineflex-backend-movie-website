@@ -41,10 +41,10 @@ public class CommentController {
         }
     }
 
-    @GetMapping("/user/comments/byTmdbId/{tmdbId}")
-    public ResponseEntity<?> getAllCommentsByTmdbId(@PathVariable Long tmdbId) {
+    @GetMapping("/user/comments/byMovieId/{movieId}")
+    public ResponseEntity<?> getAllCommentsByTmdbId(@PathVariable Long movieId) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(this.commentService.getAllCommentsByTmdbId(tmdbId));
+            return ResponseEntity.status(HttpStatus.OK).body(this.commentService.getAllCommentsByMovieId(movieId));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }

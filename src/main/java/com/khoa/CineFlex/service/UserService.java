@@ -194,7 +194,7 @@ public class UserService {
         }
 
         // Delete all comments of user and all comments of people reply to the comment of that user
-        List<Comment> comments = this.commentRepository.getAllRootCommentsOfUser(user.getEmail());
+        List<Comment> comments = this.commentRepository.getAllCommentsOfUser(user.getEmail());
 
         for (Comment comment : comments) {
             this.commentRepository.deleteAllCommentsOfUser(comment.getPath());

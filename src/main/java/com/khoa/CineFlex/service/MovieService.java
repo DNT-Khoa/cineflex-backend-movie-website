@@ -11,6 +11,7 @@ import com.khoa.CineFlex.model.Movie;
 import com.khoa.CineFlex.model.User;
 import com.khoa.CineFlex.model.UserMovieRating;
 import com.khoa.CineFlex.repository.CategoryRepository;
+import com.khoa.CineFlex.repository.CommentRepository;
 import com.khoa.CineFlex.repository.MovieRepository;
 import com.khoa.CineFlex.repository.UserMovieRatingRepository;
 import lombok.AllArgsConstructor;
@@ -28,6 +29,7 @@ public class MovieService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
     private final UserMovieRatingRepository userMovieRatingRepository;
+    private final CommentRepository commentRepository;
 
     @Transactional(readOnly = true)
     public List<MovieDto> getAllMovies() {
@@ -226,6 +228,9 @@ public class MovieService {
 
         // Delete all movie references in the User Movie Rating table
         this.userMovieRatingRepository.deleteByMovieId(movieId);
+
+        // Delete all comments of a movie
+        this.commentRepository.deleteAllCommentsByMovieId(movieId);
 
 
         this.movieRepository.deleteById(movieId);
