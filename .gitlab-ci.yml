@@ -1,11 +1,12 @@
+image: maven:3.6.3-jdk-11
 stages:
   - build
   - test
 
 build:
   stage: build
-  script: ./mvnw compile
+  script: mvn compile
 
 test:
   stage: test
-  script: ./mvnw test
+  script: mvn test
