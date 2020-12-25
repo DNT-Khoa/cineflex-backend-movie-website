@@ -12,12 +12,15 @@ test:
   script: ./mvnw test
 
 deploy:
-  stage: deploy
   image: ruby:latest
-  script:
-    - apt-get update -qy
-    - apt-get install -y ruby-dev
+  stage: deploy
+  before_script:
     - gem install dpl
-    - dpl --provider=heroku --app=$HEROKU_APPNAME --api-key=$HEROKU_APIKEY
-  only:
-    - master
+    - wget -qO- https://cli-assets.heroku.com/install-ubuntu.sh | sh
+  script:
+    - dpl --provider = heroku --app = $ HEROKU_APPNAME --api-key = $ HEROKU_APIKEY
+    - export HEROKU_API_KEY = $ HEROKU_API_KEY = $ HEROKU_APIKEY
+    - heroku run --app $ HEROKU_APPNAME migrate
+  environment:
+    name: production
+    url: $ HEROKU_APPHOST
