@@ -2,10 +2,10 @@ stages:
   - build
   - test
 
-maven-build:
+build:
   stage: build
   script: ./mvnw compile
 
-maven-test:
+test:
   stage: test
   script: ./mvnw test
