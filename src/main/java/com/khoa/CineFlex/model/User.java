@@ -19,6 +19,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Builder
+@Table(name="cineflex_users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

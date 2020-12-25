@@ -1,12 +1,11 @@
-build:
-  script:
-    - ./mvnw compile
+stages:
+  - build
+  - test
 
-test:
+maven-build:
+  stage: build
+  script: ./mvnw compile
+
+maven-test:
   stage: test
-  script:
-    - ./mvnw test
-
-after_script:
-  - echo "End CI"
-
+  script: ./mvnw test

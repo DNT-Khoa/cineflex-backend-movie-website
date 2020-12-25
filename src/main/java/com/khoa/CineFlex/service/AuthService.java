@@ -1,6 +1,7 @@
 package com.khoa.CineFlex.service;
 
 import com.khoa.CineFlex.DTO.*;
+import com.khoa.CineFlex.config.AppConfig;
 import com.khoa.CineFlex.exception.CineFlexException;
 import com.khoa.CineFlex.mapper.UserMapper;
 import com.khoa.CineFlex.model.User;
@@ -37,6 +38,7 @@ public class AuthService {
     private final RefreshTokenService refreshTokenService;
     private final MailService mailService;
     private final VerificationTokenRepository verificationTokenRepository;
+    private final AppConfig appConfig;
 
     @Transactional
     public boolean signup(RegisterRequest registerRequest, String role) {
@@ -110,7 +112,7 @@ public class AuthService {
         resetPasswordEmail.setSubject("Password reset for CineFlex");
         resetPasswordEmail.setBody("Your CineFlex password can be reset by clicking the button below. If you did not request a new password, please ignore this email");
         resetPasswordEmail.setRecipient(email);
-        resetPasswordEmail.setJoinLink("http://localhost:4502/home/resetPassword/" + token);
+        resetPasswordEmail.setJoinLink(this.appConfig.getUrl() + "/home/resetPassword/" + token);
 
         this.mailService.sendMail(resetPasswordEmail);
     }
