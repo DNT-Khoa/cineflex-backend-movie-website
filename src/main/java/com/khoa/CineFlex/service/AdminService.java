@@ -1,11 +1,9 @@
 package com.khoa.CineFlex.service;
 
 import com.khoa.CineFlex.DTO.*;
-import com.khoa.CineFlex.config.AppConfig;
 import com.khoa.CineFlex.exception.CineFlexException;
 import com.khoa.CineFlex.mapper.UserMapper;
 import com.khoa.CineFlex.model.AdminInvitationToken;
-import com.khoa.CineFlex.model.Movie;
 import com.khoa.CineFlex.model.User;
 import com.khoa.CineFlex.repository.*;
 import lombok.AllArgsConstructor;
@@ -36,7 +34,6 @@ public class AdminService {
     private final MovieRepository movieRepository;
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
-    private final AppConfig appConfig;
 
     @Transactional
     public void inviteAdmin(String email) throws MailException{
@@ -48,7 +45,7 @@ public class AdminService {
         inviteAdminEmail.setSubject("Yo yo! You have been invited to join CineFlex administration team!");
         inviteAdminEmail.setRecipient(email);
         inviteAdminEmail.setBody("We have all agreed to add you to our CineFlex team. You can join us by clicking the button below and finish some required tasks!");
-        inviteAdminEmail.setJoinLink(this.appConfig.getUrl() + "/home/adminCredentials/" + token);
+        inviteAdminEmail.setJoinLink("https://cineflex-angular-frontend.herokuapp.com/home/adminCredentials/" + token);
 
         this.mailService.sendMail(inviteAdminEmail);
     }

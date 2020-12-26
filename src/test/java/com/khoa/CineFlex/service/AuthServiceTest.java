@@ -2,7 +2,6 @@ package com.khoa.CineFlex.service;
 
 import com.khoa.CineFlex.DTO.LoginRequest;
 import com.khoa.CineFlex.DTO.RegisterRequest;
-import com.khoa.CineFlex.config.AppConfig;
 import com.khoa.CineFlex.exception.CineFlexException;
 import com.khoa.CineFlex.mapper.UserMapper;
 import com.khoa.CineFlex.model.User;
@@ -47,12 +46,10 @@ class AuthServiceTest {
     private MailService mailService;
     @Mock
     private VerificationTokenRepository verificationTokenRepository;
-    @Mock
-    private AppConfig appConfig;
 
     @BeforeEach
     public void setup() {
-        authService = new AuthService(userRepository, bCryptPasswordEncoder, userMapper, authenticationManager, userDetailsService, jwtUtil, environment, refreshTokenService, mailService, verificationTokenRepository, appConfig);
+        authService = new AuthService(userRepository, bCryptPasswordEncoder, userMapper, authenticationManager, userDetailsService, jwtUtil, environment, refreshTokenService, mailService, verificationTokenRepository);
     }
 
     @Test
