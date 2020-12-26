@@ -45,7 +45,7 @@ public class AdminService {
         inviteAdminEmail.setSubject("Yo yo! You have been invited to join CineFlex administration team!");
         inviteAdminEmail.setRecipient(email);
         inviteAdminEmail.setBody("We have all agreed to add you to our CineFlex team. You can join us by clicking the button below and finish some required tasks!");
-        inviteAdminEmail.setJoinLink("https://cineflex-angular-frontend.herokuapp.com/home/adminCredentials/" + token);
+        inviteAdminEmail.setJoinLink("https://cineflex-online-movie-theater.herokuapp.com/home/adminCredentials/" + token);
 
         this.mailService.sendMail(inviteAdminEmail);
     }
