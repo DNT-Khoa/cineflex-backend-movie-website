@@ -4,6 +4,7 @@ services:
 stages:
   - build
   - test
+  - deploy
 
 build:
   stage: build
@@ -16,3 +17,12 @@ test:
   image: maven:latest
   script:
     - mvn test
+
+deploy:
+  stage: deploy
+  image: ruby:latest
+  script:
+    - gem install dpl
+    - dpl --provider=heroku --app=$HEROKU_APPNAME --api-key=$HEROKU_APIKEY
+  only:
+    - master
