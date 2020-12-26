@@ -115,7 +115,7 @@ public class AuthService {
         resetPasswordEmail.setSubject("Password reset for CineFlex");
         resetPasswordEmail.setBody("Your CineFlex password can be reset by clicking the button below. If you did not request a new password, please ignore this email");
         resetPasswordEmail.setRecipient(email);
-        resetPasswordEmail.setJoinLink("https://cineflex-online-movie-theater/home/resetPassword/" + token);
+        resetPasswordEmail.setJoinLink("https://cineflex-online-movie-theater.herokuapp.com/home/resetPassword/" + token);
 
         this.mailService.sendMail(resetPasswordEmail);
     }
