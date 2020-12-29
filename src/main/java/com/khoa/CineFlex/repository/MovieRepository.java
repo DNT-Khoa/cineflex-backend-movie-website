@@ -32,7 +32,7 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
     @Query(value = "SELECT * FROM movie WHERE rating > 8.0 ORDER BY rating DESC LIMIT 4", nativeQuery = true)
     List<Movie> getTopRatedMoviesLimit4();
 
-    @Query("SELECT m FROM Movie m WHERE m.title LIKE %?1%")
+    @Query("SELECT m FROM Movie m WHERE LOWER(m.title) LIKE %?1% ")
     List<Movie> searchMovieByQueryKey(String key);
 
     @Query("SELECT COUNT(m.id) FROM Movie m WHERE m.movieType = 'Now Playing'")

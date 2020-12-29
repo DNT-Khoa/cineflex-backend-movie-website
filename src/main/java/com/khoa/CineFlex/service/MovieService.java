@@ -248,7 +248,7 @@ public class MovieService {
 
     @Transactional
     public List<MovieDto> searchMovieByQueryKey(String key) {
-        List<Movie> movieList = this.movieRepository.searchMovieByQueryKey(key);
+        List<Movie> movieList = this.movieRepository.searchMovieByQueryKey(key.toLowerCase());
 
         List<MovieDto> movieDtoList = this.movieMapper.listMovieToListDto(movieList);
 
