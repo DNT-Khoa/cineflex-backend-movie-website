@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -30,6 +31,7 @@ public class Comment {
     private String commentType;
 
     @Lob
+    @Type(type = "org.hibernate.type.TextType")
     private String path;
 
     private Instant commentDate;
