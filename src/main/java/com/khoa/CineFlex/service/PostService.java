@@ -48,7 +48,7 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public List<PostResponse> searchPostByKey(String key) {
-        List<Post> posts = this.postRepository.searchPostByKey(key);
+        List<Post> posts = this.postRepository.searchPostByKey(key.toLowerCase());
 
         return this.postMapper.listPostToListPostResponse(posts);
     }
