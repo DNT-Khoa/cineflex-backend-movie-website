@@ -10,6 +10,6 @@ import java.util.List;
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     Category findByName(String name);
 
-    @Query("SELECT c FROM Category c WHERE c.name LIKE %?1%")
+    @Query("SELECT c FROM Category c WHERE LOWER(c.name) LIKE %?1%")
     List<Category> findCategoryBySearchKey(String searchKey);
 }

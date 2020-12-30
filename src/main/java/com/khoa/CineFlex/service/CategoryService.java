@@ -64,6 +64,6 @@ public class CategoryService {
 
     @Transactional
     public List<CategoryDto> findCategoryBySearchKey(String searchKey) {
-         return this.categoryMapper.listCategoryToListDto(this.categoryRepository.findCategoryBySearchKey(searchKey));
+         return this.categoryMapper.listCategoryToListDto(this.categoryRepository.findCategoryBySearchKey(searchKey.toLowerCase()));
     }
 }
